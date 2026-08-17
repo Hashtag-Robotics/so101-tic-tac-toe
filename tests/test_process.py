@@ -7,6 +7,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 import pytest
+from conftest import requires_lerobot
 
 from hashtag_robotics.models import JobInputKey, JobProcess
 from hashtag_robotics.process import (
@@ -130,6 +131,7 @@ async def test_pty_does_not_echo_injected_keys(tmp_path: Path) -> None:
         managed.close()
 
 
+@requires_lerobot
 async def test_dashboard_controls_receive_real_lerobot_acknowledgements(tmp_path: Path) -> None:
     """Exercise LeRobot's actual terminal listener without connecting hardware."""
     managed = ManagedProcess(

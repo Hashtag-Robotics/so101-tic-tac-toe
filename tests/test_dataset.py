@@ -7,6 +7,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
+from conftest import requires_lerobot
 from fastapi.testclient import TestClient
 
 from hashtag_robotics.config import Settings
@@ -128,6 +129,7 @@ def test_a_complete_dataset_is_verified_from_its_files(store: DatasetStore, tmp_
     assert report["files"]["videos"]["observation.images.front"] == 1
 
 
+@requires_lerobot
 def test_episode_plan_and_video_windows_are_part_of_integrity(
     store: DatasetStore,
 ) -> None:
@@ -155,6 +157,7 @@ def test_episode_plan_and_video_windows_are_part_of_integrity(
     assert "10.000s" in problems
 
 
+@requires_lerobot
 def test_a_matching_episode_contract_is_verified(store: DatasetStore) -> None:
     directory = write_dataset(store.settings.lerobot_home)
     write_episode_contract(directory, tasks=["first", "second", "third"])

@@ -5,6 +5,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from conftest import requires_lerobot
 from fastapi.testclient import TestClient
 
 from hashtag_robotics.api import create_app
@@ -166,6 +167,7 @@ def test_rollout_game_plan_refuses_to_reuse_the_last_move_silently() -> None:
         strategy._policy_loop(dataset=dataset, single_task="fallback", control_time_s=5)
 
 
+@requires_lerobot
 def test_async_append_mode_ignores_unused_delay_mismatch_without_affecting_rtc(caplog) -> None:
     from lerobot.policies.rtc.action_queue import ActionQueue
     from lerobot.policies.rtc.configuration_rtc import RTCConfig
@@ -183,6 +185,7 @@ def test_async_append_mode_ignores_unused_delay_mismatch_without_affecting_rtc(c
     assert "Indexes diff is not equal to real delay" in caplog.text
 
 
+@requires_lerobot
 def test_checkpoint_sweep_seed_is_applied_to_rollout_sampling(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -270,6 +273,7 @@ def test_ttt_demo_preset_rejects_malformed_pose_or_board() -> None:
         )
 
 
+@requires_lerobot
 def test_a_camera_restart_marks_only_the_active_take_for_rerecord(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -288,6 +292,7 @@ def test_a_camera_restart_marks_only_the_active_take_for_rerecord(
     assert events["rerecord_episode"] is True
 
 
+@requires_lerobot
 def test_a_camera_restart_during_reset_does_not_reject_the_next_take(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
