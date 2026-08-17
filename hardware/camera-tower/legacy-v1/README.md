@@ -1,6 +1,5 @@
 # Legacy V1
 
-Bu klasörde ilk, genel amaçlı kare-boru/PETG tasarımı tutulur. Fotoğraftaki
-32×32 kamera ve PLA Silk+ için baskıda `legacy-v1` dosyalarını kullanma; üst
-klasördeki `so101_cam_tower_silk_*` V2 dosyalarını kullan.
-
+This directory preserves the original general-purpose square-tube/PETG design.
+Do not use these files for the 32 x 32 mm camera and PLA Silk+ build shown in
+this project; use the `so101_cam_tower_silk_*` files in the parent directory.

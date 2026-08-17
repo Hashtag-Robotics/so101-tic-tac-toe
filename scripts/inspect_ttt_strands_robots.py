@@ -12,7 +12,7 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from hashtag_robotics.ttt_strands_robots import inspect_strands_robots_runtime  # noqa: E402
+from hashtag_robotics_ttt.strands_robots import inspect_strands_robots_runtime  # noqa: E402
 
 
 def main() -> int:

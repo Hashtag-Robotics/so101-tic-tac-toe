@@ -14,11 +14,13 @@ calibration files or raw terminal history.
 
 ## Trust boundaries
 
-- The web control plane is local-first and should remain bound to loopback.
+- The optional dashboard is a separate local-first project and should remain
+  bound to loopback unless it is placed behind an independently reviewed access
+  boundary.
 - LLM output is advisory until deterministic schemas, roles, leases, limits and
   approval gates accept it.
-- Client-supplied policy paths are not trusted; policies resolve to pinned,
-  server-owned Hugging Face snapshots.
+- Policy paths are not accepted from model output; the runtime resolves only
+  revision-pinned local Hugging Face snapshots.
 - Secrets belong in an OS secret store or process environment, never source,
   JSON profiles, notebooks or logs.
 - `HASHTAG_ENABLE_PHYSICAL=true` is only one gate. It does not replace per-run
@@ -27,7 +29,8 @@ calibration files or raw terminal history.
 ## Robot incident response
 
 If motion is unsafe, use the physical power cut/E-STOP first. Software stop,
-Ctrl-C and dashboard controls are secondary. Do not reach into the arm sweep.
+Ctrl-C and optional dashboard controls are secondary. Do not reach into the arm
+sweep.
 After an incident, keep logs and the exact artifact revisions, inspect mounting,
 gearing, calibration and cables with torque disabled, and do not resume from the
 failed state without a fresh preflight.

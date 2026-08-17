@@ -2,10 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from hashtag_robotics.jobs import apply_server_defaults
-from hashtag_robotics.models import JobCreateRequest, JobKind, TargetMode
-from hashtag_robotics.repository import Repository
-from hashtag_robotics.tic_tac_toe import (
+from hashtag_robotics_ttt.tic_tac_toe import (
     TIC_TAC_TOE_PROFILE,
     TicTacToePresetError,
     canonical_tic_tac_toe_parameters,
@@ -60,11 +57,9 @@ def test_unknown_move_is_rejected_before_a_command_can_be_built() -> None:
         )
 
 
-def test_job_submission_canonicalizes_the_dashboard_request(tmp_path) -> None:
-    request = JobCreateRequest(
-        kind=JobKind.POLICY_ROLLOUT,
-        target_mode=TargetMode.REAL,
-        parameters={
+def test_canonical_contract_overrides_untrusted_runtime_fields() -> None:
+    normalized = canonical_tic_tac_toe_parameters(
+        {
             "rollout_profile": TIC_TAC_TOE_PROFILE,
             "move_id": "O-5",
             "policy_id": "policy",
@@ -72,12 +67,9 @@ def test_job_submission_canonicalizes_the_dashboard_request(tmp_path) -> None:
             "workspace_confirmed": True,
             "task": "client injected",
             "duration": 1,
-        },
-        requested_by="dashboard",
+        }
     )
 
-    normalized = apply_server_defaults(request, Repository(tmp_path / "state.db"))
-
-    assert normalized.parameters["task"] == "put the white O in the middle center cell"
-    assert normalized.parameters["episodes"] == 1
-    assert "duration" not in normalized.parameters
+    assert normalized["task"] == "put the white O in the middle center cell"
+    assert normalized["episodes"] == 1
+    assert "duration" not in normalized

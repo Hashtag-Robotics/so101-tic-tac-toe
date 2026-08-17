@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Doğal dille kullanılan fiziksel XOX Strands agent giriş noktası."""
+"""Natural-language entry point for the physical tic-tac-toe Strands agent."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ def _ensure_project_venv() -> None:
     if Path(sys.prefix).resolve() == VENV_ROOT.resolve():
         return
     if not VENV_PYTHON.is_file():
-        raise RuntimeError(f"Proje sanal ortamı bulunamadı: {VENV_PYTHON}")
+        raise RuntimeError(f"Project virtual environment not found: {VENV_PYTHON}")
     os.execv(
         str(VENV_PYTHON),
         [str(VENV_PYTHON), str(Path(__file__).resolve()), *sys.argv[1:]],
@@ -25,7 +25,7 @@ def _ensure_project_venv() -> None:
 
 
 def _runner_arguments(arguments: list[str]) -> list[str]:
-    if "--physical" in arguments:
+    if "--inspect" in arguments or "--physical" in arguments:
         return arguments
     return ["--physical", *arguments]
 
@@ -46,5 +46,5 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except RuntimeError as error:
-        print(f"Agent başlatılamadı: {error}", file=sys.stderr)
+        print(f"Agent could not start: {error}", file=sys.stderr)
         raise SystemExit(2) from error

@@ -15,13 +15,13 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from hashtag_robotics.config import Settings  # noqa: E402
-from hashtag_robotics.strands_runtime import (  # noqa: E402
+from hashtag_robotics_ttt.model_provider import (  # noqa: E402
     StrandsRuntimeError,
     build_model,
     split_model_spec,
 )
-from hashtag_robotics.ttt_strands_agent import (  # noqa: E402
+from hashtag_robotics_ttt.settings import SettingsError, TicTacToeSettings  # noqa: E402
+from hashtag_robotics_ttt.strands_agent import (  # noqa: E402
     CHECKPOINTS,
     DEFAULT_MODEL_VARIANT,
     MODEL_VARIANTS,
@@ -131,7 +131,10 @@ def persist_agent_trace(
 
 
 def run_agent(args: argparse.Namespace) -> int:
-    settings = Settings()
+    try:
+        settings = TicTacToeSettings.from_environment()
+    except SettingsError as error:
+        raise TicTacToeAgentError(str(error)) from error
     config = TicTacToeAgentConfig.from_environment(
         REPO_ROOT,
         args.checkpoint,
@@ -211,22 +214,22 @@ def run_agent(args: argparse.Namespace) -> int:
     print(f"Strands provider: {provider}")
     human_symbol = "O" if config.forced_agent_symbol == "X" else "X"
     print(
-        f"Agent {config.forced_agent_symbol}, insan {human_symbol}'dur. "
-        "Agent ilk hamleyi yapar ve semboller oyun boyunca değişmez."
+        f"The agent is {config.forced_agent_symbol}; the human is {human_symbol}. "
+        "The agent moves first and symbols remain fixed for the entire game."
     )
-    print("İlk fiziksel hamlede yalnızca bu oyun için tek bir doğal dil onayı istenir.")
-    print("Sonraki hamleler, el çalışma yolundan çekilince otomatik devam eder.")
-    print("Değişmeyen board üzerindeki no_motion/grasp failure en fazla 3 kez otomatik denenir.")
-    print("Tehlikede fiziksel E-STOP'a bas. Ctrl-C veya Ctrl-D agent sürecini durdurur.")
+    print("The first physical move requires one natural-language approval for this game only.")
+    print("Later moves continue automatically after hands leave the workspace.")
+    print("No-motion or grasp failures on an unchanged board retry at most three times.")
+    print("Use the physical E-STOP if unsafe. Ctrl-C or Ctrl-D stops the agent process.")
 
     result: object | None = None
     agent_error: str | None = None
     try:
         command = args.command
         if command is None:
-            command = input("\nAgent'a doğal dille ne yapmak istediğini söyle: ").strip()
+            command = input("\nTell the agent what you want it to do: ").strip()
         if not command:
-            raise TicTacToeAgentError("Agentın başlaması için doğal dille bir istek yazmalısın.")
+            raise TicTacToeAgentError("Provide a natural-language request before starting.")
         result = agent(command, limits={"turns": config.max_agent_turns})
         print(f"\nAgent result:\n{result}")
         return 0

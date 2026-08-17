@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from hashtag_robotics.ttt_strands_agent import (
+from hashtag_robotics_ttt.strands_agent import (
     CAMERA_TO_MODEL_CELL,
     MODEL_TO_CAMERA_CELL,
     MOVE_TOOL_NAME,
@@ -60,21 +60,21 @@ def test_board_contract_refuses_wrong_turn_occupied_target_and_finished_game() -
 def test_terminal_gate_uses_captured_tty_and_requires_exact_move() -> None:
     output = FakeTTY()
     gate = TerminalOperatorGate(
-        FakeTTY("Bu oyun boyunca denetimli otomatik robot hamlelerini onaylıyorum\n"), output
+        FakeTTY("I approve supervised automatic robot moves for this game\n"), output
     )
     gate("X-5", "put the red X in the middle center cell", "120000")
     gate("X-3", "put the red X in the top right cell", "120000")
-    assert output.getvalue().count("FİZİKSEL OYUN OTURUMU") == 1
-    assert "Bu oyun boyunca denetimli otomatik robot hamlelerini onaylıyorum" in (output.getvalue())
+    assert output.getvalue().count("PHYSICAL GAME SESSION") == 1
+    assert "I approve supervised automatic robot moves for this game" in output.getvalue()
 
     with pytest.raises(TicTacToeAgentError, match="did not authorize"):
-        TerminalOperatorGate(FakeTTY("Sadece bu hamleyi onaylıyorum\n"), FakeTTY())(
+        TerminalOperatorGate(FakeTTY("I approve only this move\n"), FakeTTY())(
             "X-5", "put the red X in the middle center cell", "120000"
         )
 
     with pytest.raises(TicTacToeAgentError, match="interactive operator terminal"):
         TerminalOperatorGate(
-            io.StringIO("Bu oyun boyunca denetimli otomatik robot hamlelerini onaylıyorum\n"),
+            io.StringIO("I approve supervised automatic robot moves for this game\n"),
             FakeTTY(),
         )("X-5", "put the red X in the middle center cell", "120000")
 
@@ -226,7 +226,7 @@ def test_controller_drives_launcher_pty_and_persists_move_result(tmp_path, monke
         "checkpoint_path_template": "checkpoints/{checkpoint}/pretrained_model",
         "checkpoints": ["120000"],
     }
-    package = tmp_path / "src" / "hashtag_robotics"
+    package = tmp_path / "src" / "hashtag_robotics_ttt"
     package.mkdir(parents=True)
     (package / "ttt_checkpoint_sweep.json").write_text(json.dumps(manifest))
     checkpoint = (
@@ -277,14 +277,14 @@ if sys.stdin.readline().strip() != "HOME":
 attributes = termios.tcgetattr(sys.stdin.fileno())
 attributes[3] &= ~(termios.ICANON | termios.ECHO)
 termios.tcsetattr(sys.stdin.fileno(), termios.TCSANOW, attributes)
-print("Hazır olunca sağ ok veya n", flush=True)
+print("Ready: press Right Arrow or n", flush=True)
 if sys.stdin.read(1) != "n":
     raise SystemExit(8)
-print("Tahta onaylandı; model inference başlıyor.", flush=True)
+print("Board confirmed; model inference is starting.", flush=True)
 if sys.stdin.read(1) != "n":
     raise SystemExit(7)
-print("Rollout tamamlandı. Dataset: /tmp/fake-dataset", flush=True)
-print("Terminal logu kaydedildi: /tmp/fake-rollout.log", flush=True)
+print("Rollout complete. Dataset: /tmp/fake-dataset", flush=True)
+print("Terminal log saved: /tmp/fake-rollout.log", flush=True)
 """
     launchers = tmp_path / "ttt-rollouts"
     launchers.mkdir()
@@ -401,16 +401,17 @@ def test_agent_entrypoint_requires_explicit_physical_opt_in_and_uses_no_generic_
     None
 ):
     source = (ROOT / "scripts" / "run_ttt_strands_agent.py").read_text()
-    controller_source = (ROOT / "src" / "hashtag_robotics" / "ttt_strands_agent.py").read_text()
+    controller_source = (ROOT / "src" / "hashtag_robotics_ttt" / "strands_agent.py").read_text()
     entrypoint = (ROOT / "agent.py").read_text()
-    docs = (ROOT / "TTT_STRANDS_AGENT.md").read_text()
+    docs = (ROOT / "STRANDS_AGENT.md").read_text()
 
     assert '"--physical"' in source
     assert "SequentialToolExecutor" in source
     assert "strands_tools" not in source
     assert "strands_robots" not in source
-    assert "Bu oyun boyunca denetimli otomatik robot hamlelerini onaylıyorum" in (controller_source)
+    assert "I approve supervised automatic robot moves for this game" in controller_source
     assert "_runner_arguments(sys.argv[1:])" in entrypoint
+    assert 'if "--inspect" in arguments or "--physical" in arguments:' in entrypoint
     assert 'return ["--physical", *arguments]' in entrypoint
     assert 'default="120000"' in source
     assert "default=DEFAULT_MODEL_VARIANT" in source

@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-import hashtag_robotics.ttt_strands_robots as native
+import hashtag_robotics_ttt.strands_robots as native
 
 
 @pytest.mark.skipif(

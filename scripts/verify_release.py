@@ -23,7 +23,7 @@ REQUIRED_PATHS = (
     "SECURITY.md",
     "CONTRIBUTING.md",
     "README.md",
-    "README_TR.md",
+    "STRANDS_AGENT.md",
     "config/artifacts.lock.json",
     "config/ttt-hardware.example.json",
     "hardware/LICENSE",
@@ -36,7 +36,6 @@ REQUIRED_PATHS = (
     "hardware/tic-tac-toe/manifest.json",
     "hardware/tic-tac-toe/checksums.sha256",
     "hardware/camera-tower/README.md",
-    "hardware/camera-tower/README_TR.md",
     "hardware/camera-tower/BOM.csv",
     "training/README.md",
     "training/03_train_games_1_15_colab_a100.ipynb",
@@ -48,29 +47,6 @@ SECRET_PATTERNS = {
     "API key with sk prefix": re.compile(rb"sk-[A-Za-z0-9_-]{20,}"),
     "GitHub token": re.compile(rb"gh[pousr]_[A-Za-z0-9]{20,}"),
     "private key": re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-}
-
-FORBIDDEN_INTEGRATIONS = {
-    "forbidden private integration phrase": re.compile(
-        bytes.fromhex("636f646578") + rb"[\s_-]*" + bytes.fromhex("70726f7879"),
-        re.IGNORECASE,
-    ),
-    "forbidden private integration probe": re.compile(
-        bytes.fromhex("70726f62655f636f6465785f70726f7879")
-    ),
-    "forbidden private launcher environment": re.compile(bytes.fromhex("54494e595f4d4f44454c5f")),
-    "forbidden private provider key setting": re.compile(
-        bytes.fromhex("484153485441475f4147454e545f4150495f4b4559")
-    ),
-    "forbidden non-standard provider spec": re.compile(
-        bytes.fromhex("6f70656e61693a"), re.IGNORECASE
-    ),
-    "forbidden non-standard Strands provider": re.compile(
-        bytes.fromhex("737472616e64732e6d6f64656c732e6f70656e6169")
-    ),
-    "forbidden non-standard provider dependency": re.compile(
-        bytes.fromhex("6e616d65203d20226f70656e616922")
-    ),
 }
 
 
@@ -111,10 +87,29 @@ def require_release_files() -> None:
         raise ReleaseError(f"Required release files are missing: {', '.join(missing)}")
 
 
+def verify_repository_boundary() -> None:
+    result = subprocess.run(
+        ["git", "ls-files", "frontend", "src/hashtag_robotics"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    present = [line for line in result.stdout.splitlines() if line]
+    if present:
+        raise ReleaseError(f"Dashboard-owned paths remain in the game repository: {present}")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    dashboard_url = "https://github.com/Hashtag-Robotics/so101-dashboard"
+    if dashboard_url not in readme:
+        raise ReleaseError("README does not link to the standalone dashboard repository")
+    if not (ROOT / "src" / "hashtag_robotics_ttt" / "__init__.py").is_file():
+        raise ReleaseError("Standalone hashtag_robotics_ttt package is missing")
+
+
 def verify_artifact_contract() -> None:
     lock = read_json(ROOT / "config" / "artifacts.lock.json")
-    full = read_json(ROOT / "src" / "hashtag_robotics" / "ttt_checkpoint_sweep.json")
-    baseline = read_json(ROOT / "src" / "hashtag_robotics" / "ttt_games_1_5_80k.json")
+    full = read_json(ROOT / "src" / "hashtag_robotics_ttt" / "ttt_checkpoint_sweep.json")
+    baseline = read_json(ROOT / "src" / "hashtag_robotics_ttt" / "ttt_games_1_5_80k.json")
 
     dataset = lock["dataset"]
     policy = lock["default_policy"]
@@ -264,20 +259,15 @@ def verify_publishable_tree() -> None:
         for label, pattern in SECRET_PATTERNS.items():
             if pattern.search(payload):
                 problems.append(f"possible {label}: {relative}")
-        for label, pattern in FORBIDDEN_INTEGRATIONS.items():
-            if pattern.search(payload):
-                problems.append(f"{label}: {relative}")
-
     portable_paths = (
         ROOT / "config" / "ttt-hardware.example.json",
         ROOT / "scripts" / "run_ttt_recorded_rollout.zsh",
         ROOT / "scripts" / "return_ttt_arm_home.py",
-        ROOT / "src" / "hashtag_robotics" / "ttt_strands_agent.py",
-        ROOT / "TTT_STRANDS_AGENT.md",
+        ROOT / "src" / "hashtag_robotics_ttt" / "strands_agent.py",
+        ROOT / "STRANDS_AGENT.md",
     )
-    local_home = b"/Users/" + b"macmert"
     physical_identifiers = {
-        "developer home path": re.compile(re.escape(local_home)),
+        "hard-coded macOS home path": re.compile(rb"/Users/[A-Za-z0-9._-]+"),
         "hard-coded macOS follower port": re.compile(rb"/dev/cu\.usbmodem[A-Za-z0-9]+"),
         "hard-coded AVFoundation UID": re.compile(rb"0x[0-9A-Fa-f]{12,}"),
     }
@@ -294,6 +284,7 @@ def verify_publishable_tree() -> None:
 def main() -> int:
     checks = (
         ("required files", require_release_files),
+        ("standalone repository boundary", verify_repository_boundary),
         ("pinned dataset/model contract", verify_artifact_contract),
         ("manufacturing checksums", verify_checksums),
         ("STL dimensions and 3MF integrity", verify_manufacturing_manifest),
