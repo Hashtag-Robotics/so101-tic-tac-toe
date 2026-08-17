@@ -204,27 +204,46 @@ class DoctorService:
 
         lerobot = _version(capabilities.packages["lerobot"])
         strands_robots = _version(capabilities.packages["strands-robots"])
-        conflict = (
-            lerobot is not None
-            and strands_robots is not None
-            and lerobot >= Version("0.6")
-            and strands_robots <= Version("0.4.1")
+        pair_installed = lerobot is not None and strands_robots is not None
+        legacy_conflict = bool(
+            pair_installed and lerobot >= Version("0.6") and strands_robots <= Version("0.4.1")
         )
+        native_contract_conflict = bool(
+            pair_installed
+            and strands_robots >= Version("0.5.1")
+            and not Version("0.6.1") <= lerobot < Version("0.7")
+        )
+        if not pair_installed:
+            compatibility_status = CheckStatus.NOT_APPLICABLE
+            compatibility_detail = "Install both optional packages to check their version pair."
+            compatibility_remediation = None
+        elif legacy_conflict:
+            compatibility_status = CheckStatus.BLOCKED
+            compatibility_detail = (
+                "Known conflict: Strands Robots 0.4.1 and older require LeRobot below 0.6."
+            )
+            compatibility_remediation = (
+                "Use the strands-robots feature pack pinned by this project."
+            )
+        elif native_contract_conflict:
+            compatibility_status = CheckStatus.BLOCKED
+            compatibility_detail = (
+                "Strands Robots 0.5.1+ requires LeRobot >=0.6.1,<0.7.0 for this runtime."
+            )
+            compatibility_remediation = (
+                "Resolve the environment from this project's lock file and feature pack."
+            )
+        else:
+            compatibility_status = CheckStatus.PASS
+            compatibility_detail = "No known blocked version pair detected."
+            compatibility_remediation = None
         checks.append(
             DoctorCheck(
                 code="compat.lerobot-strands-robots",
                 label="LeRobot / Strands Robots compatibility",
-                status=CheckStatus.BLOCKED if conflict else CheckStatus.PASS,
-                detail=(
-                    "Known conflict: Strands Robots 0.4.1 pins LeRobot below 0.6."
-                    if conflict
-                    else "No known blocked version pair detected."
-                ),
-                remediation=(
-                    "Use a tested Strands Robots release/commit compatible with LeRobot 0.6."
-                    if conflict
-                    else None
-                ),
+                status=compatibility_status,
+                detail=compatibility_detail,
+                remediation=compatibility_remediation,
             )
         )
 

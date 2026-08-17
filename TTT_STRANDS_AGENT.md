@@ -16,8 +16,10 @@ checkpoint'ini, eğitimde kullanılan 18 sabit görev üzerinden fiziksel olarak
 - İnsan operatör: ilk hareketten önce süpürme alanını ve E-STOP'u kontrol edip o oyun oturumunu
   terminalden bir kez onaylar. Fiziksel E-STOP'un yerini hiçbir yazılım aracı tutmaz.
 
-Agent'a genel `shell`, Python, servo veya joint aracı verilmez. Mevcut `ttt-rollouts/X-1..X-9`
-ve `ttt-rollouts/O-1..O-9` scriptlerinin her biri ayrı bir Strands tool olarak yüklenir.
+Agent'a genel `shell`, Python, servo veya joint aracı verilmez. Agent yalnızca
+`play_tic_tac_toe_move(model_cell, board_camera, rationale)` aracını görür. Controller kilitli
+sembolü hücreyle birleştirir, kesin eğitim prompt'unu üretir ve alttaki
+`ttt-rollouts/X-1..X-9` veya `ttt-rollouts/O-1..O-9` launcher'larından birini seçer.
 
 ## Koordinat sözleşmesi
 
@@ -47,8 +49,29 @@ Repo kökünde:
 uv pip install --python .venv/bin/python -e '.[agents,dev,so101]'
 ```
 
-Genel `strands-agents-tools` ve `strands-robots` bu akışın bağımlılığı değildir: agent'a shell,
-Python, ham servo veya ikinci bir hardware runtime verilmez.
+Genel `strands-agents-tools` bu akışın bağımlılığı değildir. Üretim runner'ı da Strands Robots'un
+genel amaçlı Robot tool'unu agent'a vermez; local policy ve fiziksel güvenlik sözleşmesi tek domain
+tool'un arkasında kalır.
+
+Opsiyonel native Strands Robots kontratını donanım olmadan kurup incelemek için:
+
+```zsh
+uv sync --extra dev --extra strands-robots
+uv run python scripts/inspect_ttt_strands_robots.py
+```
+
+Bu komut `Robot` oluşturmaz, model indirmez, seri port aramaz ve kamera açmaz. Inspector mevcut
+`HashtagRobotics/smolvla-tic-tac-toe-games-1-15-120k` repo/revision/checkpoint sözleşmesini,
+provider `lerobot_local`, policy type `smolvla`, 50-action chunk,
+`top -> observation.images.camera1`, `wrist -> observation.images.camera2` ve `strict_keys=True`
+olarak raporlar. Policy loader yalnız mevcut revision-pinned fetch scriptinin indirdiği yerel
+checkpoint dizinini kabul eder; serbest veya unpinned Hub modeli yüklemez.
+
+Native sim factory açıkça `mode="sim"` ve `mesh=False` kullanır; `auto` moda izin verilmez. Native
+gerçek donanım factory'si kalıcı fiziksel ayar ile çağrı-bazlı açık onayı birlikte ister ve bu masa
+üzerinde HIL doğrulanana kadar `agent.py` tarafından seçilmez. Pinli Strands Robots `0.5.1`
+`lerobot_local` yüklemesi için `STRANDS_TRUST_REMOTE_CODE=1` environment gate'ini ister; proje bunu
+kendiliğinden set etmez.
 
 ## Standart Strands provider ayarı
 
@@ -157,11 +180,12 @@ watchdog teardown ve fiziksel E-STOP operatör tarafında bağımsız olarak akt
 2. Açık insan komutundan sonra robot hareket etmeden iki kameradan güncel snapshot alır. İki kameradan
    biri okunamazsa oyun başlamaz.
 3. Top kamera tahtasını `.../.../...` biçiminde çözer ve boş olduğunu doğrular.
-4. Controller agent'ı X'e, insanı O'ya kilitler ve ilk hamleyi agent yapar; O tool'u çağrılırsa
-   fiziksel hareket başlamadan reddedilir.
+4. Controller agent'ı X'e, insanı O'ya kilitler ve ilk hamleyi agent yapar; move tool sembol
+   parametresi kabul etmez, dolayısıyla agent O hareketi seçemez.
 5. Boş board doğrulandıktan sonra agent ilk hücreyi kendi XOX stratejisiyle dokuz boş hücre arasından
    seçer. Varsayılan merkez veya hard-coded açılış hamlesi yoktur.
-6. Agent 18 sabit hareket aracından yalnızca kendi sembolüne ait birini seçer.
+6. Agent model/robot koordinatında 1–9 hücresini tek move tool'a verir. Controller kilitli sembolle
+   18 sabit launcher'dan doğru olanı deterministik olarak seçer.
 7. Controller oyun fazını, kilitli sembolü, son onaylı tahtayı ve hedef hücrenin boşluğunu tekrar kontrol
    eder; ilk fiziksel hamlede oyun oturumu onayı ister, sonraki hamlelerde tekrar sormaz.
 8. Seçilen launcher, revision-pinned checkpoint ile başlar ve kayıt alır.
@@ -216,6 +240,7 @@ snapshot yolları tutulur. Her hamle için şunlar kalıcıdır:
   sürdürür. Terminal logunda eğitim preset referansı bulunabilir; agent mevcut tahtayı değiştirmez.
 - Bir model provider image tool-result bloklarını veya tool calling'i desteklemiyorsa agent fiziksel
   harekete başlamadan hata vermelidir. Böyle bir modeli yalnızca metin modeli olarak kullanma.
-- `strands-labs/robots` doğrudan SO-101/SmolVLA çalıştırabilir; bu tasarımda kullanılmaz. Mevcut
-  AVFoundation UID, checkpoint pinning, recorder, clamp, terminal log ve E-STOP sözleşmesini ikinci
-  bir hardware runtime ile değiştirmek karşılaştırılabilirliği bozar.
+- Strands Robots native SO-101/SmolVLA adaptörü opsiyonel olarak mevcuttur; fakat stock hardware
+  kamera yolu OpenCV device/index bekler. Mevcut AVFoundation UID, recorder, başlangıç pozu, chunk,
+  terminal log ve E-STOP davranışıyla HIL eşdeğerliği henüz kanıtlanmadığından production runner'ı
+  değiştirmez. Geçiş ancak aynı 18 görev üzerinde kontrollü karşılaştırma sonrasında yapılacaktır.

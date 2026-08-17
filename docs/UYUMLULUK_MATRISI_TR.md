@@ -1,6 +1,6 @@
 # Uyumluluk Matrisi
 
-**Son doğrulama:** 30 Temmuz 2026
+**Son doğrulama:** 17 Ağustos 2026
 **Kanal:** development
 
 ## 1. Doğrulanan ortamlar
@@ -20,7 +20,7 @@
 | OpenCV | `4.13.0` (headless) | Kamera probe ve MJPEG akışı geçti |
 | MuJoCo | `3.10.0` | Contract simulation geçti |
 | Strands Agents | `1.48.0` | Import/API contract geçti |
-| Strands Robots | Kurulmadı | Bilinen LeRobot conflict nedeniyle (bkz. §3) |
+| Strands Robots | `0.5.1` opsiyonel contract | Metadata/factory/policy/gate unit testleri geçti; fiziksel HIL yapılmadı |
 
 **Bu makineye özgü iki not:**
 
@@ -67,16 +67,20 @@ Hashtag adapter yalnız argüman listesi kullanır; shell string üretmez.
 
 ## 3. Strands Robots kararı
 
-Yayımlanmış `strands-robots==0.4.1`, LeRobot için `<0.6.0` aralığı tanımlar.
-Platformun doğruladığı LeRobot ise `0.6.0`'dır.
+Eski `strands-robots==0.4.1` ile LeRobot `0.6.x` uyuşmazlığı devam eder. Yeni
+opsiyonel contract `strands-robots==0.5.1` ve LeRobot `>=0.6.1,<0.7.0` çiftini
+pinler.
 
-Bu nedenle:
+Bu aşamada:
 
-- Stable environment'a `strands-robots==0.4.1` eklenmedi.
-- Doküman/main özelliği installed capability kabul edilmedi.
-- Agent runtime için bağımsız `strands-agents==1.48.0` kullanıldı.
-- Strands Robots daha sonra uyumlu release veya açık commit pin'i ile ayrı
-  preview channel'da test edilecek.
+- `Robot("so101", mode="sim", mesh=False)` çağrısı factory-double ile test edilir.
+- Hashtag Robotics SmolVLA repo/revision/checkpoint, camera key map ve
+  `strict_keys=True` parametreleri model yüklemeden test edilir.
+- Native gerçek robot oluşturma yolu kalıcı fiziksel gate + çağrı-bazlı opt-in,
+  port, calibration ve iki kamera sözleşmesi olmadan kapanır.
+- `mode="auto"` proje adaptöründe yoktur.
+- AVFoundation UID kamera, kayıt, başlangıç pozu ve chunk davranışı için HIL
+  eşdeğerliği doğrulanmadığından mevcut 18-launcher production backend korunur.
 
 ## 4. Package extras
 
@@ -86,6 +90,7 @@ hashtag-robotics
 ├── [agents]  Strands Agents
 ├── [sim]     MuJoCo
 ├── [so101]   LeRobot 0.6
+├── [strands-robots]  Strands Robots 0.5.1 + LeRobot 0.6.1 native preview
 └── [dev]     test/lint araçları
 ```
 
@@ -93,6 +98,7 @@ Geliştirme doğrulaması:
 
 ```bash
 uv sync --extra dev --extra agents --extra sim --extra so101
+uv sync --extra dev --extra strands-robots
 ```
 
 Core wheel, ağır training/sim paketlerini zorunlu olarak kurmaz.
@@ -126,7 +132,7 @@ Bu sürüm henüz şu ortamları doğrulamadı:
 - ROS 2
 - Isaac/Newton
 - Uzak GPU gerçek inference
-- Strands Robots preview
+- Strands Robots fiziksel backend/HIL eşdeğerliği
 
 Doctor'da görünmesi destek garantisi değildir; test matrisi sonucu ayrıca
 gereklidir.

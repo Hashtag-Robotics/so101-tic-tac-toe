@@ -9,6 +9,7 @@ import pytest
 from hashtag_robotics.ttt_strands_agent import (
     CAMERA_TO_MODEL_CELL,
     MODEL_TO_CAMERA_CELL,
+    MOVE_TOOL_NAME,
     BoardError,
     BoardState,
     TerminalOperatorGate,
@@ -17,9 +18,9 @@ from hashtag_robotics.ttt_strands_agent import (
     TicTacToeRolloutController,
     build_tic_tac_toe_tools,
     expected_camera_board,
+    move_id_for_agent_cell,
     sanitize_strands_messages,
     tic_tac_toe_system_prompt,
-    tool_name_for_move,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,7 +79,7 @@ def test_terminal_gate_uses_captured_tty_and_requires_exact_move() -> None:
         )("X-5", "put the red X in the middle center cell", "120000")
 
 
-def test_all_eighteen_move_tools_are_narrow_and_have_exact_training_tasks() -> None:
+def test_single_move_tool_keeps_symbol_and_training_task_out_of_the_model_schema() -> None:
     class ConfigStub:
         forced_agent_symbol = "X"
 
@@ -105,38 +106,41 @@ def test_all_eighteen_move_tools_are_narrow_and_have_exact_training_tasks() -> N
 
     tools = build_tic_tac_toe_tools(ControllerStub())  # type: ignore[arg-type]
     names = {item.tool_name for item in tools}
-    move_names = {tool_name_for_move(f"{piece}-{cell}") for piece in "XO" for cell in range(1, 10)}
 
-    assert len(tools) == 23
-    assert move_names <= names
-    assert names - move_names == {
+    assert len(tools) == 6
+    assert names == {
         "observe_board",
         "choose_game_symbol",
         "acknowledge_human_move",
         "confirm_workspace_clear",
         "finish_active_move",
+        MOVE_TOOL_NAME,
     }
     assert "emergency_stop" not in names
 
     configs = {item.tool_name: item.tool_spec for item in tools}
-    for piece, object_name in (("X", "red X"), ("O", "white O")):
-        for cell, cell_name in {
-            1: "top left",
-            2: "top center",
-            3: "top right",
-            4: "middle left",
-            5: "middle center",
-            6: "middle right",
-            7: "bottom left",
-            8: "bottom center",
-            9: "bottom right",
-        }.items():
-            config = configs[tool_name_for_move(f"{piece}-{cell}")]
-            assert f"put the {object_name} in the {cell_name} cell" in config["description"]
-            assert set(config["inputSchema"]["json"]["properties"]) == {
-                "board_camera",
-                "rationale",
-            }
+    move_config = configs[MOVE_TOOL_NAME]
+    assert "exact X SmolVLA move" in move_config["description"]
+    assert "180-degree TOP CAMERA transform" in move_config["description"]
+    assert set(move_config["inputSchema"]["json"]["properties"]) == {
+        "model_cell",
+        "board_camera",
+        "rationale",
+    }
+    assert "symbol" not in move_config["inputSchema"]["json"]["properties"]
+    assert "instruction" not in move_config["inputSchema"]["json"]["properties"]
+
+
+def test_move_tool_parameter_resolves_only_the_locked_agent_symbol() -> None:
+    assert move_id_for_agent_cell("x", 1) == "X-1"
+    assert move_id_for_agent_cell("O", 9) == "O-9"
+
+    with pytest.raises(BoardError, match="agent_symbol must be X or O"):
+        move_id_for_agent_cell("red", 5)
+    with pytest.raises(BoardError, match="integer from 1 through 9"):
+        move_id_for_agent_cell("X", True)
+    with pytest.raises(BoardError, match="integer from 1 through 9"):
+        move_id_for_agent_cell("X", 10)
 
 
 def test_system_prompt_forces_observation_lifecycle_and_no_freeform_control() -> None:
@@ -146,7 +150,9 @@ def test_system_prompt_forces_observation_lifecycle_and_no_freeform_control() ->
     assert "First call observe_board" in prompt
     assert "you always make the first move" in prompt
     assert "You are X for the entire game and the human is O" in prompt
-    assert "Never call an O move tool" in prompt
+    assert "Never play O or act during the human's turns" in prompt
+    assert f"only {MOVE_TOOL_NAME} with model_cell=1..9" in prompt
+    assert "never choose the piece or write the policy instruction" in prompt
     assert "independently choose the opening cell from all nine legal" in prompt
     assert "No opening cell is predetermined" in prompt
     assert "Do not assume center" in prompt
@@ -163,6 +169,7 @@ def test_system_prompt_forces_observation_lifecycle_and_no_freeform_control() ->
     assert "confirm_workspace_clear" in prompt
     assert "retry_scheduled=true" in prompt
     assert "at most three automatic retries" in prompt
+    assert "SAME model_cell" in prompt
 
 
 def test_static_preflight_is_pinned_to_the_checkpoint_manifest(monkeypatch) -> None:

@@ -55,6 +55,7 @@ HUMAN_POLL_SECONDS = 5.0
 WORKSPACE_CLEAR_SECONDS = 2.0
 WORKSPACE_CLEAR_CONFIRMATIONS = 2
 EMPTY_BOARD = ".../.../..."
+MOVE_TOOL_NAME = "play_tic_tac_toe_move"
 
 
 class TicTacToeAgentError(RuntimeError):
@@ -216,11 +217,17 @@ def expected_camera_board(board_camera: str, move_id: str) -> str:
     return str(board.with_value(camera_cell, piece))
 
 
-def tool_name_for_move(move_id: str) -> str:
-    piece, model_cell = piece_and_model_cell(move_id)
-    object_slug = "red_x" if piece == "X" else "white_o"
-    cell_slug = TIC_TAC_TOE_CELLS[model_cell].replace(" ", "_")
-    return f"put_{object_slug}_in_model_{cell_slug}"
+def move_id_for_agent_cell(agent_symbol: str, model_cell: int) -> str:
+    """Resolve the one agent-facing cell parameter to a trained move id."""
+
+    normalized_symbol = str(agent_symbol).strip().upper()
+    if normalized_symbol not in TIC_TAC_TOE_PIECES:
+        raise BoardError("agent_symbol must be X or O.")
+    if isinstance(model_cell, bool) or not isinstance(model_cell, int):
+        raise BoardError("model_cell must be an integer from 1 through 9.")
+    if model_cell not in TIC_TAC_TOE_CELLS:
+        raise BoardError("model_cell must be an integer from 1 through 9.")
+    return f"{normalized_symbol}-{model_cell}"
 
 
 @dataclass(frozen=True)
@@ -586,9 +593,16 @@ class TicTacToeRolloutController:
             "session_dir": str(self.session_dir),
             "audit_path": str(self.audit_path),
             "preflight": self.config.static_preflight(),
-            "tool_names": [
-                tool_name_for_move(f"{piece}-{cell}") for piece in "XO" for cell in range(1, 10)
+            "agent_tools": [
+                "observe_board",
+                "choose_game_symbol",
+                "acknowledge_human_move",
+                "confirm_workspace_clear",
+                "finish_active_move",
+                MOVE_TOOL_NAME,
             ],
+            "move_tool_name": MOVE_TOOL_NAME,
+            "launcher_move_ids": [f"{piece}-{cell}" for piece in "XO" for cell in range(1, 10)],
             "camera_to_model_cell": CAMERA_TO_MODEL_CELL,
             "model_to_camera_cell": MODEL_TO_CAMERA_CELL,
             "game": self.game_state(),
@@ -1357,7 +1371,7 @@ def _image_tool_result(tool_context: Any, observation: dict[str, Any]) -> dict[s
 
 
 def build_tic_tac_toe_tools(controller: TicTacToeRolloutController) -> list[Any]:
-    """Build a narrow Strands surface: game lifecycle and 18 exact moves."""
+    """Build a narrow Strands surface: five lifecycle tools and one move tool."""
     try:
         from strands import tool
     except ImportError as error:  # pragma: no cover - only a base install hits this
@@ -1467,45 +1481,41 @@ def build_tic_tac_toe_tools(controller: TicTacToeRolloutController) -> list[Any]
         """
         return controller.finish_move(board_camera_after, outcome, diagnosis)
 
-    tools: list[Any] = [
+    @tool(
+        name=MOVE_TOOL_NAME,
+        description=(
+            f"Start one exact {configured_agent_symbol} SmolVLA move. Pass MODEL/ROBOT cell "
+            "1..9 (1=top left, 2=top center, 3=top right, 4=middle left, "
+            "5=middle center, 6=middle right, 7=bottom left, 8=bottom center, "
+            "9=bottom right). The controller derives the locked symbol and exact training "
+            "prompt, applies the required 180-degree TOP CAMERA transform, and rejects an "
+            "occupied target, wrong turn, retry mismatch, concurrent rollout, or unapproved "
+            "physical execution."
+        ),
+    )
+    def play_tic_tac_toe_move(
+        model_cell: int,
+        board_camera: str,
+        rationale: str,
+    ) -> dict[str, Any]:
+        """Start one deterministic training-backed SmolVLA move.
+
+        Args:
+            model_cell: Target MODEL/ROBOT cell, as an integer from 1 through 9.
+            board_camera: Current TOP CAMERA board as .../.../....
+            rationale: Why this is a legal and strategically selected move.
+        """
+        move_id = move_id_for_agent_cell(configured_agent_symbol, model_cell)
+        return controller.start_move(move_id, board_camera, rationale)
+
+    return [
         observe_board,
         choose_game_symbol,
         acknowledge_human_move,
         confirm_workspace_clear,
         finish_active_move,
+        play_tic_tac_toe_move,
     ]
-    for piece in "XO":
-        for model_cell in range(1, 10):
-            move_id = f"{piece}-{model_cell}"
-            model_cell_name = TIC_TAC_TOE_CELLS[model_cell]
-            camera_cell = MODEL_TO_CAMERA_CELL[model_cell]
-            description = (
-                f"Start launcher {move_id} with the exact trained SmolVLA task: "
-                f"'{task_for_move(move_id)}'. This targets MODEL/ROBOT cell {model_cell} "
-                f"({model_cell_name}), which is TOP CAMERA cell {camera_cell} after the "
-                "required 180-degree coordinate transform. It refuses occupied targets, the "
-                "human's symbol, out-of-phase turns, concurrent rollouts and unapproved physical "
-                "execution."
-            )
-
-            def make_invoke_move(bound_move_id: str) -> Callable[[str, str], dict[str, Any]]:
-                def invoke_move(board_camera: str, rationale: str) -> dict[str, Any]:
-                    """Start one exact SmolVLA move.
-
-                    Args:
-                        board_camera: Current TOP CAMERA board as .../.../....
-                        rationale: Why this is a legal and strategically selected move.
-                    """
-                    return controller.start_move(bound_move_id, board_camera, rationale)
-
-                return invoke_move
-
-            tools.append(
-                tool(name=tool_name_for_move(move_id), description=description)(
-                    make_invoke_move(move_id)
-                )
-            )
-    return tools
 
 
 def tic_tac_toe_system_prompt(
@@ -1532,9 +1542,10 @@ def tic_tac_toe_system_prompt(
             f"You are {normalized_agent_symbol} for the entire game and the human is "
             f"{human_symbol}.",
             f"Lock {normalized_agent_symbol} with choose_game_symbol and make the first move.",
-            f"Never call an {human_symbol} move tool or play the human's turns.",
-            "Your robot moves use exactly one of the 18 fixed SmolVLA tools; each contains the",
-            "exact training prompt.",
+            f"Never play {human_symbol} or act during the human's turns.",
+            f"Your robot moves use only {MOVE_TOOL_NAME} with model_cell=1..9.",
+            "The controller combines that cell with your locked symbol and resolves the exact",
+            "training prompt. You never choose the piece or write the policy instruction.",
             "Never invent a prompt, shell command, joint command, coordinate or extra tool.",
             "",
             "Observation contract:",
@@ -1554,8 +1565,11 @@ def tic_tac_toe_system_prompt(
             "Game contract:",
             "- Agent-first role order is authoritative. Do not let conventional symbol order",
             "  override the configured agent-first diagnostic game.",
-            "- Once selected, never change your symbol and never call the opponent's move tools.",
-            "- Never call a move tool whose TOP CAMERA target is occupied.",
+            "- Once selected, never change your symbol or play the opponent's turn.",
+            (
+                "- Never call the move tool for a MODEL cell whose mapped TOP CAMERA target "
+                "is occupied."
+            ),
             "- Stop when X or O has three in a row, or when the board is full.",
             "- Choose a winning move first, block an opponent win second, then play strategically.",
             (
@@ -1568,13 +1582,16 @@ def tic_tac_toe_system_prompt(
             ),
             "- For no_motion, grasp failure, dropped_piece or unclear with an unchanged board,",
             "  finish_active_move may return retry_scheduled=true. Do not end the game then.",
-            "  Re-scan the board and workspace, then invoke the SAME locked move tool again.",
+            (
+                "  Re-scan the board and workspace, then invoke the move tool with the SAME "
+                "model_cell."
+            ),
             "  The controller allows at most three automatic retries for one logical move.",
             "",
             "Move lifecycle:",
             (
-                "1. Call exactly one fixed move tool with your board_camera transcription "
-                "and rationale."
+                f"1. Call {MOVE_TOOL_NAME} exactly once with model_cell, your board_camera "
+                "transcription and rationale."
             ),
             "2. Before the first physical move only, the human approves this bounded game session",
             "   in the terminal. Later moves in the same session need no repeated typed approval.",
@@ -1583,7 +1600,8 @@ def tic_tac_toe_system_prompt(
             "5. Call finish_active_move exactly once for success or ordinary failure.",
             "   If retry_scheduled=true, observe and transcribe the full board again, then call",
             "   confirm_workspace_clear with that board on two clear observations two seconds",
-            "   apart. When phase=agent_turn, call only pending_retry_move_id; do not re-plan.",
+            "   apart. When phase=agent_turn, reuse the model_cell in pending_retry_move_id;",
+            "   do not re-plan or choose a different cell.",
             "   If retry_exhausted=true, report the failed attempts and halt.",
             "6. After success, do not make another robot move. You are waiting for the human.",
             "7. Call observe_board with wait_seconds=5. If the board is unchanged, repeat with",

@@ -21,7 +21,7 @@ executing guarded physical rollouts.
 | Camera tower | [`hardware/camera-tower`](hardware/camera-tower) | Parametric source, STEP/STL/3MF, BOM and assembly notes |
 | Local control plane | [`src/hashtag_robotics`](src/hashtag_robotics) | FastAPI backend, deterministic jobs, leases, approvals, audit and safety gates |
 | Dashboard | [`frontend`](frontend) | React/TypeScript UI, packaged into the Python wheel |
-| Tic-tac-toe runner | [`agent.py`](agent.py), [`ttt-rollouts`](ttt-rollouts) | 18 fixed X/O move launchers and a vision-guided Strands workflow |
+| Tic-tac-toe runner | [`agent.py`](agent.py), [`ttt-rollouts`](ttt-rollouts) | One agent-facing move tool backed by 18 fixed X/O launchers |
 | Artifact contract | [`config/artifacts.lock.json`](config/artifacts.lock.json) | Dataset/model revisions, feature shapes and camera mapping |
 | Training recipe | [`training`](training) | Colab A100 notebook for the published 120K run |
 
@@ -160,6 +160,31 @@ exact schema is pinned and load-tested. Do not connect or remap a third camera;
 the runtime contract remains `top -> camera1`, `wrist -> camera2` with
 `empty_cameras=1`.
 
+### Optional native Strands Robots contract
+
+The repository also contains an experimental, software-first adapter for
+`strands-robots==0.5.1` and LeRobot `>=0.6.1,<0.7.0`. Install it only when you
+want to evaluate that path:
+
+```bash
+uv sync --extra dev --extra strands-robots
+uv run python scripts/inspect_ttt_strands_robots.py
+```
+
+The inspection command reads package metadata and prints the revision-pinned
+policy/camera contract. It does not instantiate `Robot`, load weights, enumerate
+serial devices or open cameras. Native simulation always constructs
+`Robot("so101", mode="sim", mesh=False)` explicitly. Native hardware construction
+requires both the persistent physical setting and a per-invocation opt-in;
+`mode="auto"` is not accepted by the project adapter.
+
+The upstream `lerobot_local` provider requires an explicit remote-code trust
+gate. This project never sets it on the user's behalf: review the pinned model
+repository before opting in. The current macOS production runner still uses its
+AVFoundation UID camera helper and guarded 18-launcher backend. The native
+Strands Robots hardware path currently accepts OpenCV camera devices, has not
+been HIL-tested for this bench, and is not selected by `agent.py`.
+
 ## 6. Physical rollout — supervised only
 
 Before power-on:
@@ -198,8 +223,9 @@ Bedrock and Anthropic are also supported by the existing Strands runtime; use
 their normal SDK credential/configuration chain and install the corresponding
 provider client. Do not put provider credentials in this repository.
 
-The LLM never receives shell, raw servo or unrestricted robot tools. It chooses
-among 18 fixed move tools; the deterministic controller owns legal moves,
+The LLM never receives shell, raw servo or unrestricted robot tools. It supplies
+one model-cell integer to a single move tool; the deterministic controller locks
+the symbol, derives one of the 18 exact training tasks, and owns legal moves,
 resource leases, camera mapping, retry limits, session approval and audit. See
 [`TTT_STRANDS_AGENT.md`](TTT_STRANDS_AGENT.md) for the complete contract.
 

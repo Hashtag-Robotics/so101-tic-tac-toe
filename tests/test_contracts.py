@@ -119,9 +119,17 @@ def test_teleoperator_calibration_arguments_parse_against_lerobot() -> None:
 
 
 def test_setup_motors_arguments_parse_against_lerobot() -> None:
-    config = parse(setup_motors_script.SetupConfig, build(JobKind.MOTOR_SETUP, **ROBOT))
+    arguments = build(JobKind.MOTOR_SETUP, **ROBOT)
+    config = parse(setup_motors_script.SetupConfig, arguments)
+
+    assert "--robot.type=so101_follower" in arguments
     assert config.robot.port == "/dev/follower"
-    assert config.robot.type in setup_motors_script.COMPATIBLE_DEVICES
+    assert isinstance(
+        config.robot,
+        setup_motors_script.RobotConfig.get_choice_class("so101_follower"),
+    )
+    assert config.teleop is None
+    assert config.device is config.robot
 
 
 def test_training_arguments_parse_against_lerobot() -> None:

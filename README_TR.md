@@ -25,8 +25,9 @@ hardware-in-the-loop (HIL) test sınırına getirildi.
 - Hashtag Robot/Camera/Dataset/Policy manifestleri
 - Safe mock teleop, recording, replay ve calibration workflow'ları
 - Dataset → validation → training → policy → evaluation zinciri
-- Gerçek LeRobot `0.6.0` console-script adapter contract'ları
+- Gerçek LeRobot `0.6.x` console-script adapter contract'ları
 - Strands Agents `1.48.0` structured planner ve deterministic command gateway
+- Opsiyonel Strands Robots `0.5.1` software-only/native adapter sözleşmesi
 - MuJoCo SO-101 altı-joint contract simulation
 - Remote inference TLS/latency contract
 - Doctor, capability manifest, diagnostics ve HIL checklist
@@ -51,9 +52,11 @@ approval'ı olmadan başlayamaz.
 | Strands Agents | Reasoning, structured planning ve workflow |
 | Hashtag platform | Product profile, jobs, leases, safety, audit ve UX |
 
-Strands Robots kararlı PyPI sürümünün LeRobot `0.6.0` ile bilinen dependency
-uyuşmazlığı nedeniyle bu baseline'a doğrudan kurulmadı. Runtime capability
-probe hazırdır; uyumlu kararlı release/commit seçilince adapter açılacaktır.
+Strands Robots `0.5.1`, LeRobot `>=0.6.1,<0.7.0` ile ayrı bir opsiyonel feature
+pack olarak pinlendi. Bu katmanda yalnız metadata, simülasyon factory, pinned
+policy parametreleri ve çift fiziksel onay kapısı software-only test edildi.
+Mevcut AVFoundation UID kamera ve kayıtlı rollout davranışı henüz native backend
+ile HIL doğrulanmadığı için üretim XOX runner'ı otomatik olarak değiştirilmedi.
 
 ## Hızlı başlangıç
 
@@ -62,6 +65,13 @@ Geliştirme ortamı:
 ```bash
 uv sync --extra dev --extra agents --extra sim --extra so101
 npm install --prefix frontend
+```
+
+Donanıma dokunmadan native Strands Robots sözleşmesini incelemek için:
+
+```bash
+uv sync --extra dev --extra strands-robots
+uv run python scripts/inspect_ttt_strands_robots.py
 ```
 
 Dashboard'u build et:

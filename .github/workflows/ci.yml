@@ -91,12 +91,12 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
-      # Torch is a large download, so this job carries the LeRobot surface on
-      # its own; the fast job above stays green in minutes. `sim` comes along
-      # because the recording tests drive SimArm, which is MuJoCo, and `agents`
-      # because this job runs the whole suite.
+      # Torch is a large download, so this job carries the LeRobot and optional
+      # Strands Robots surfaces on its own; the fast job above stays green in
+      # minutes. `sim` comes along because the recording tests drive SimArm,
+      # and `agents` because this job runs the whole suite.
       - name: Install with the SO-101 extra
-        run: uv sync --extra dev --extra so101 --extra sim --extra agents
+        run: uv sync --extra dev --extra so101 --extra sim --extra agents --extra strands-robots
 
       # The whole suite, not a file list. Everything is installed here, so this
       # is the only job where the `requires_lerobot` tests actually run -- and a

@@ -67,7 +67,7 @@ def restore_terminal(state: tuple[int, list[object]] | None) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Run a pinned local SmolVLA tic-tac-toe policy as 18 narrow Strands tools. "
+            "Run a pinned local SmolVLA tic-tac-toe policy behind one narrow move tool. "
             "This command never trains a model."
         )
     )
@@ -183,7 +183,9 @@ def run_agent(args: argparse.Namespace) -> int:
     agent = Agent(
         model=model,
         name="hashtag_tic_tac_toe_operator",
-        description=("Vision-guided human opponent using 18 fixed SmolVLA tic-tac-toe moves."),
+        description=(
+            "Vision-guided human opponent using one deterministic, training-backed move tool."
+        ),
         system_prompt=tic_tac_toe_system_prompt(
             config.checkpoint,
             config.model_variant,

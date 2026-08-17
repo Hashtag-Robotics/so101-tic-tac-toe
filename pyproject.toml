@@ -60,6 +60,13 @@ sim = [
 so101 = [
   "lerobot[core_scripts,feetech,smolvla]>=0.6,<0.7",
 ]
+strands-robots = [
+  # 0.5.1 is the first stable line used by this project that composes with
+  # LeRobot 0.6.1. Simulation and native local-policy dependencies stay
+  # optional so the dashboard's software-only core remains light.
+  "strands-robots[lerobot,sim-mujoco]==0.5.1",
+  "lerobot[core_scripts,feetech,smolvla]>=0.6.1,<0.7",
+]
 training = [
   "lerobot[training]>=0.6,<0.7",
 ]
