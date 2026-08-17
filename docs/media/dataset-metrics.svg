@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 290" role="img" aria-labelledby="title desc">
+  <title id="title">Published dataset at a glance</title>
+  <desc id="desc">The public LeRobot dataset contains 195 episodes, 144723 frames, 18 move tasks, two camera views, 30 frames per second, and six-dimensional state and action vectors.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10141d"/><stop offset="1" stop-color="#080a0f"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ff304f"/><stop offset="1" stop-color="#ff8a45"/></linearGradient>
+  </defs>
+  <rect width="1440" height="290" rx="28" fill="url(#bg)"/>
+  <text x="58" y="53" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="23" font-weight="750">The behavior we captured</text>
+  <text x="58" y="79" fill="#828b9c" font-family="Inter,Arial,sans-serif" font-size="13" letter-spacing="1.5">PUBLIC LEROBOT V3 DATASET / REVISION-PINNED</text>
+  <rect x="58" y="99" width="1324" height="2" rx="1" fill="url(#accent)"/>
+  <g font-family="Inter,Arial,sans-serif">
+    <g transform="translate(58 132)">
+      <text y="49" fill="#ffffff" font-size="43" font-weight="800">195</text>
+      <text y="78" fill="#ff4662" font-size="12" font-weight="800" letter-spacing="1.6">EPISODES</text>
+      <text y="103" fill="#7f899b" font-size="13">complete demonstrations</text>
+    </g>
+    <g transform="translate(282 132)">
+      <text y="49" fill="#ffffff" font-size="43" font-weight="800">144,723</text>
+      <text y="78" fill="#ff5d5c" font-size="12" font-weight="800" letter-spacing="1.6">FRAMES</text>
+      <text y="103" fill="#7f899b" font-size="13">time-aligned observations</text>
+    </g>
+    <g transform="translate(568 132)">
+      <text y="49" fill="#ffffff" font-size="43" font-weight="800">18</text>
+      <text y="78" fill="#ff8748" font-size="12" font-weight="800" letter-spacing="1.6">MOVE TASKS</text>
+      <text y="103" fill="#7f899b" font-size="13">X/O × nine target cells</text>
+    </g>
+    <g transform="translate(786 132)">
+      <text y="49" fill="#ffffff" font-size="43" font-weight="800">2</text>
+      <text y="78" fill="#d3a64b" font-size="12" font-weight="800" letter-spacing="1.6">CAMERAS</text>
+      <text y="103" fill="#7f899b" font-size="13">top + wrist at 640 × 480</text>
+    </g>
+    <g transform="translate(1004 132)">
+      <text y="49" fill="#ffffff" font-size="43" font-weight="800">30</text>
+      <text y="78" fill="#75c681" font-size="12" font-weight="800" letter-spacing="1.6">FPS</text>
+      <text y="103" fill="#7f899b" font-size="13">robot-time sampling rate</text>
+    </g>
+    <g transform="translate(1214 132)">
+      <text y="49" fill="#ffffff" font-size="43" font-weight="800">6D</text>
+      <text y="78" fill="#2dd4bf" font-size="12" font-weight="800" letter-spacing="1.6">STATE + ACTION</text>
+      <text y="103" fill="#7f899b" font-size="13">strict feature contract</text>
+    </g>
+  </g>
+</svg>

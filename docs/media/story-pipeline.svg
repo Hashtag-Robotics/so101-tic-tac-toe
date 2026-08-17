@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 330" role="img" aria-labelledby="title desc">
+  <title id="title">From idea to a robot playing tic-tac-toe</title>
+  <desc id="desc">Seven connected stages: build the arm, ask an agent, design with Strands CAD, print the game, record demonstrations, train SmolVLA, and play through a Strands Agent.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0b0e15"/>
+      <stop offset="1" stop-color="#151925"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#ff304f"/>
+      <stop offset="0.54" stop-color="#ff7b45"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="9" stdDeviation="10" flood-color="#000" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="330" rx="28" fill="url(#bg)"/>
+  <text x="60" y="52" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="750">One idea. One continuous robotics loop.</text>
+  <text x="60" y="79" fill="#818a9b" font-family="Inter,Arial,sans-serif" font-size="14" letter-spacing="1">THE PROJECT STORY, FROM OUR WORKBENCH TO THE GAME BOARD</text>
+  <path d="M120 190H1320" stroke="#2c3342" stroke-width="8" stroke-linecap="round"/>
+  <path d="M120 190H1320" stroke="url(#line)" stroke-width="3" stroke-linecap="round"/>
+
+  <g font-family="Inter,Arial,sans-serif" text-anchor="middle" filter="url(#shadow)">
+    <g transform="translate(120 190)">
+      <circle r="39" fill="#171b26" stroke="#ff304f" stroke-width="3"/>
+      <path d="M-14 12h28l7 12h-42zm3-4V-8m22 16V-8M-15-8h30l-4-17h-22z" fill="none" stroke="#f4f6fa" stroke-width="3" stroke-linejoin="round"/>
+      <text y="67" fill="#ff4662" font-size="11" font-weight="800" letter-spacing="1.4">01 / BUILD</text>
+      <text y="88" fill="#f4f6fa" font-size="15" font-weight="700">Our SO-101</text>
+    </g>
+    <g transform="translate(320 190)">
+      <circle r="39" fill="#171b26" stroke="#ff465f" stroke-width="3"/>
+      <path d="M-18-10h36v24h-22l-11 9 3-9h-6z" fill="none" stroke="#f4f6fa" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="-8" cy="2" r="2" fill="#ff465f"/><circle cy="2" r="2" fill="#ff465f"/><circle cx="8" cy="2" r="2" fill="#ff465f"/>
+      <text y="67" fill="#ff5b62" font-size="11" font-weight="800" letter-spacing="1.4">02 / ASK</text>
+      <text y="88" fill="#f4f6fa" font-size="15" font-weight="700">Strands Agent</text>
+    </g>
+    <g transform="translate(520 190)">
+      <circle r="39" fill="#171b26" stroke="#ff655d" stroke-width="3"/>
+      <path d="M-18 13l7-25 18-8 13 13-8 18-25 7zm25-25l5 5-5 5-5-5z" fill="none" stroke="#f4f6fa" stroke-width="3" stroke-linejoin="round"/>
+      <text y="67" fill="#ff7654" font-size="11" font-weight="800" letter-spacing="1.4">03 / DESIGN</text>
+      <text y="88" fill="#f4f6fa" font-size="15" font-weight="700">Strands CAD</text>
+    </g>
+    <g transform="translate(720 190)">
+      <circle r="39" fill="#171b26" stroke="#ff8447" stroke-width="3"/>
+      <path d="M-19-16h38v26h-8V1h-22v9h-8zm8 26h22v16h-22zM-12-9h24" fill="none" stroke="#f4f6fa" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="12" cy="-8" r="2.5" fill="#ff8447"/>
+      <text y="67" fill="#ff9641" font-size="11" font-weight="800" letter-spacing="1.4">04 / PRINT</text>
+      <text y="88" fill="#f4f6fa" font-size="15" font-weight="700">Board + pieces</text>
+    </g>
+    <g transform="translate(920 190)">
+      <circle r="39" fill="#171b26" stroke="#d8a641" stroke-width="3"/>
+      <rect x="-20" y="-15" width="40" height="30" rx="4" fill="none" stroke="#f4f6fa" stroke-width="3"/>
+      <path d="M-12-7h24M-12 0h24M-12 7h24M-5-12v24M5-12v24" stroke="#f4f6fa" stroke-width="2" opacity="0.8"/>
+      <text y="67" fill="#d7b64a" font-size="11" font-weight="800" letter-spacing="1.4">05 / RECORD</text>
+      <text y="88" fill="#f4f6fa" font-size="15" font-weight="700">195 episodes</text>
+    </g>
+    <g transform="translate(1120 190)">
+      <circle r="39" fill="#171b26" stroke="#79c27c" stroke-width="3"/>
+      <path d="M-18 17V5l9-8 9 5 9-17 9 8" fill="none" stroke="#f4f6fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="18" cy="-7" r="4" fill="#79c27c"/>
+      <text y="67" fill="#79cf8c" font-size="11" font-weight="800" letter-spacing="1.4">06 / TRAIN</text>
+      <text y="88" fill="#f4f6fa" font-size="15" font-weight="700">SmolVLA 120K</text>
+    </g>
+    <g transform="translate(1320 190)">
+      <circle r="42" fill="#12231f" stroke="#2dd4bf" stroke-width="4"/>
+      <path d="M-18-18l36 36M18-18l-36 36" stroke="#ff304f" stroke-width="7" stroke-linecap="round"/>
+      <circle r="24" fill="none" stroke="#f4f6fa" stroke-width="4" opacity="0.85"/>
+      <text y="70" fill="#2dd4bf" font-size="11" font-weight="800" letter-spacing="1.4">07 / PLAY</text>
+      <text y="91" fill="#f4f6fa" font-size="15" font-weight="700">Agent + policy</text>
+    </g>
+  </g>
+</svg>
