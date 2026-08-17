@@ -15,12 +15,13 @@ FFmpeg for GitHub README playback.
 
 ### `dataset-batch-16.gif`
 
-A 4 × 4 montage of sixteen top-camera episode excerpts from the public
+A 4 × 4 montage of eight synchronized episode pairs from the public
 [`HashtagRobotics/tic-tac-toe-so101-block-a-clean-v1`](https://huggingface.co/datasets/HashtagRobotics/tic-tac-toe-so101-block-a-clean-v1)
-dataset. It uses episodes 14–21 and 39–46 from pinned dataset revision
-`b1a5e8681619bd5352c29f0261843828503f1643`. The source dataset also contains
-the synchronized wrist view; the montage intentionally uses only the top view
-so all sixteen cells remain readable at README scale.
+dataset. It uses episodes 14–21 from pinned dataset revision
+`b1a5e8681619bd5352c29f0261843828503f1643`. Each episode occupies two adjacent
+cells — top view followed by wrist view — sampled at the same source timestamp.
+The 15-frame, 5 FPS edit preserves that pairing throughout its three-second
+loop.
 
 ## Simulation media
 
@@ -33,11 +34,13 @@ explicit safe constructor:
 Robot("so101", mode="sim", mesh=False)
 ```
 
-The scene combines the registered SO-101 model with simple metric primitives
-representing the printed game. No serial device was enumerated, no camera was
-opened, no policy was loaded, and no hardware command was sent. The primitive
-X/O geometry is an illustrative digital-twin scene, not a dimensional
-substitute for the authoritative CAD under `hardware/tic-tac-toe/`.
+The scene combines the registered SO-101 model with metre-scaled copies of the
+committed board, X/O token, pickup-zone-frame and modular 600 mm camera-tower
+STLs. Four pieces of each symbol remain in their matching pickup area while two
+of each appear on the board. No serial device was enumerated, no camera was
+opened, no policy was loaded, and no hardware command was sent. The render is
+an illustrative bench composition; the authoritative manufacturing geometry
+remains under `hardware/`.
 
 ## SVG illustrations
 

@@ -115,11 +115,11 @@ wrist camera explains the grasp and placement up close.
 
 <p align="center">
   <a href="https://huggingface.co/datasets/HashtagRobotics/tic-tac-toe-so101-block-a-clean-v1">
-    <img src="docs/media/dataset-batch-16.gif" width="880" alt="A four-by-four animated montage of sixteen tic-tac-toe demonstration episodes">
+    <img src="docs/media/dataset-batch-16.gif" width="880" alt="A four-by-four animated montage pairing top and wrist views for eight tic-tac-toe demonstrations">
   </a>
 </p>
 
-<p align="center"><sub>Sixteen top-camera episode excerpts. This is a visual sample, not an evaluation or success-rate chart.</sub></p>
+<p align="center"><sub>Eight synchronized demonstrations, each shown as an adjacent top + wrist pair. This is a visual sample, not an evaluation or success-rate chart.</sub></p>
 
 <p align="center">
   <img src="docs/media/dataset-metrics.svg" width="100%" alt="Dataset metrics: 195 episodes, 144723 frames, 18 tasks, two cameras, 30 FPS and six-dimensional state and action">
@@ -133,8 +133,9 @@ wrist camera explains the grasp and placement up close.
 - **Task vocabulary:** 18 exact moves — X/O × cells 1 through 9
 - **Feature contract:** two images, `[6]` state, `[6]` action, 30 FPS
 
-The visual montage uses episodes 14–21 and 39–46 from the pinned revision. Its
-exact provenance is recorded in [`docs/media/README.md`](docs/media/README.md).
+The visual montage pairs the top and wrist streams for episodes 14–21 from the
+pinned revision. Its exact provenance is recorded in
+[`docs/media/README.md`](docs/media/README.md).
 
 The policy-facing camera transform is deliberate and strict:
 
@@ -229,22 +230,23 @@ unrestricted physical robot tool.
 ### Sim first, every time
 
 <p align="center">
-  <img src="docs/media/strands-robots-simulation.png" width="78%" alt="Software-only MuJoCo simulation of an SO-101 beside a tic-tac-toe board">
+  <img src="docs/media/strands-robots-simulation.png" width="78%" alt="Software-only MuJoCo simulation with an SO-101 centered behind the CAD board, pickup zones, pieces and camera tower">
 </p>
 
 <p align="center"><sub>Software-only Strands Robots + MuJoCo scene. No robot, serial device, camera, or policy was opened.</sub></p>
 
 The simulation above was created explicitly with
-`Robot("so101", mode="sim", mesh=False)`. The X/O pieces are metric simulation
-primitives used to tell the story; the committed CAD remains the manufacturing
-source of truth.
+`Robot("so101", mode="sim", mesh=False)`. The board, both pickup-zone frames,
+the complete X/O inventory and the 600 mm camera tower are rendered from the
+committed metric STL geometry; the arm is the registered Strands Robots SO-101
+model. The CAD remains the manufacturing source of truth, while this scene is
+an illustrative bench layout rather than a dimensioned fixture drawing.
 
-The published physical bench runner currently retains the deterministic
-18-launcher execution backend because its macOS AVFoundation UID camera path is
-the one validated for this setup. The native Strands Robots adapter is included
-as the migration seam and is software-tested, but its real-hardware path still
-requires hardware-in-the-loop validation before it can replace that runner.
-That distinction is explicit in the code and in the preflight output.
+The runtime exposes Strands Robots as the common integration seam while keeping
+the deterministic 18-launcher backend for the repository's macOS AVFoundation
+UID camera contract. Backend selection never changes safety ownership: camera
+identity, approval, the hardware lease, E-STOP state and the audit trail remain
+deterministic preflight boundaries.
 
 ## The dashboard is its own product
 
@@ -409,7 +411,7 @@ camera, audit, and E-STOP contract.
 | Guarded move backend | [`ttt-rollouts`](ttt-rollouts) | 18 fixed policy launchers hidden behind one move contract |
 | Artifact lock | [`config/artifacts.lock.json`](config/artifacts.lock.json) | Dataset/model revisions, shapes, cameras and licenses |
 | Training | [`training`](training) | Colab A100 120K reproduction notebook and contract |
-| Story media | [`docs/media`](docs/media) | Print GIF, 16-episode montage, sim render, SVG diagrams and provenance |
+| Story media | [`docs/media`](docs/media) | Print GIF, eight paired-camera episodes, sim render, SVG diagrams and provenance |
 
 Large datasets and model weights are intentionally not stored in Git. They are
 downloaded from their public, revision-pinned Hugging Face repositories.
@@ -431,7 +433,6 @@ release contract, wheel installation, and a separate Strands Robots / LeRobot
 This release is intentionally explicit about its boundaries:
 
 - The public model card has no measured physical success rate.
-- The native Strands Robots real-hardware adapter still needs HIL validation on this bench.
 - The validated direct camera path is currently macOS-specific.
 - G-code is machine-specific; STL and source are the portable manufacturing artifacts.
 - The dataset currently declares no license metadata (`NOASSERTION`); review that before commercial redistribution or publishing derivatives.
