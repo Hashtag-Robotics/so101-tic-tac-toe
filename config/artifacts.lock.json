@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "dataset": {
+    "repo_id": "HashtagRobotics/tic-tac-toe-so101-block-a-clean-v1",
+    "revision": "b1a5e8681619bd5352c29f0261843828503f1643",
+    "public": true,
+    "expected_episodes": 195,
+    "expected_frames": 144723,
+    "fps": 30,
+    "robot_type": "so_follower",
+    "camera_features": [
+      "observation.images.top",
+      "observation.images.wrist"
+    ],
+    "state_shape": [6],
+    "action_shape": [6],
+    "license": "NOASSERTION"
+  },
+  "default_policy": {
+    "repo_id": "HashtagRobotics/smolvla-tic-tac-toe-games-1-15-120k",
+    "revision": "48a6313b7e4983781dd72919105ca691a77cd26c",
+    "checkpoint": "120000",
+    "public": true,
+    "license": "Apache-2.0",
+    "dataset_revision": "b1a5e8681619bd5352c29f0261843828503f1643",
+    "camera_mapping": {
+      "observation.images.top": "observation.images.camera1",
+      "observation.images.wrist": "observation.images.camera2"
+    },
+    "declared_visual_inputs": [
+      "observation.images.camera1",
+      "observation.images.camera2",
+      "observation.images.camera3",
+      "observation.images.empty_camera_0"
+    ],
+    "empty_cameras": 1,
+    "state_shape": [6],
+    "action_shape": [6],
+    "fps": 30,
+    "inference_files": [
+      "config.json",
+      "model.safetensors",
+      "policy_postprocessor.json",
+      "policy_postprocessor_step_0_unnormalizer_processor.safetensors",
+      "policy_preprocessor.json",
+      "policy_preprocessor_step_5_normalizer_processor.safetensors",
+      "train_config.json"
+    ]
+  },
+  "baseline_policy": {
+    "repo_id": "HashtagRobotics/smolvla-tic-tac-toe-games-1-5-80k",
+    "revision": "d65f5ec4f771b4e6d21c5be78ddc18af242895a6",
+    "checkpoint": "080000",
+    "public": true,
+    "license": "Apache-2.0",
+    "dataset_revision": "527021f455d6af0ae6e4a9be0e2bd665d21b05be",
+    "expected_episodes": 65,
+    "state_shape": [6],
+    "action_shape": [6],
+    "fps": 30
+  }
+}

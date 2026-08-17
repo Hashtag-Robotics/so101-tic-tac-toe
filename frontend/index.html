@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Hashtag Robotics SO-101 local control plane"
+    />
+    <meta name="theme-color" content="#0e0f13" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#edeff2" media="(prefers-color-scheme: light)" />
+    <!-- /assets altinda duruyor cunku sunucu yalnizca o dizini statik servis
+         eder; kokteki bir dosya SPA fallback'ine dusup index.html donerdi. -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <title>Hashtag Robotics · Control Plane</title>
+    <!-- Tema React boyanmadan once secilir; aksi halde koyu panel bir kare
+         beyaz parlayip sonra kararir. Varsayilan koyu, secim kalicidir. -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("hr-theme");
+          if (saved === "light" || saved === "dark") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch (e) {
+          /* localStorage kapaliysa varsayilan koyu tema kalir */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

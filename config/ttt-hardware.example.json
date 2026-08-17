@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "robot_port": "/dev/serial/by-id/replace-with-your-so101-follower",
+  "robot_id": "my_follower",
+  "calibration_dir": ".local-data/lerobot-data/calibration/robots/so_follower",
+  "camera_helper": ".local-data/bin/avfoundation-uid-capture",
+  "top_camera_uid": "replace-with-your-overhead-camera-uid",
+  "wrist_camera_uid": "replace-with-your-wrist-camera-uid",
+  "inference_device": "cuda"
+}

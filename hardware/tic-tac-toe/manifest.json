@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "units": "mm",
+  "validated_slicer": "Bambu Studio 02.08.00.50",
+  "validated_printer": "Bambu Lab P2S, 0.4 mm nozzle",
+  "parts": [
+    {
+      "id": "board",
+      "quantity": 1,
+      "stl": "stl/board.stl",
+      "dimensions": [240.0, 240.0, 5.0]
+    },
+    {
+      "id": "x-token",
+      "quantity": 6,
+      "stl": "stl/x-token.stl",
+      "dimensions": [52.0, 52.0, 8.0]
+    },
+    {
+      "id": "o-token",
+      "quantity": 6,
+      "stl": "stl/o-token.stl",
+      "dimensions": [52.0, 52.0, 8.0]
+    },
+    {
+      "id": "pickup-zone-frame",
+      "quantity": 2,
+      "stl": "stl/zone-frame.stl",
+      "dimensions": [250.0, 200.0, 1.2]
+    }
+  ],
+  "p2s_3mf": [
+    "3mf/bambu-p2s/ttt_p2s_hashtag_black_pla_cf.3mf",
+    "3mf/bambu-p2s/ttt_p2s_x6_red_silk_plus_lightweight.3mf",
+    "3mf/bambu-p2s/ttt_p2s_o6_gray_silk_plus_lightweight.3mf",
+    "3mf/bambu-p2s/black_x_zone_frame_250x200.3mf",
+    "3mf/bambu-p2s/black_o_zone_frame_250x200.3mf"
+  ],
+  "machine_gcode": {
+    "warning": "Only for the exact Bambu Lab P2S 0.4 mm validated setup; inspect before use.",
+    "files": [
+      "gcode/bambu-p2s/black_x_zone_frame_250x200_p2s.gcode",
+      "gcode/bambu-p2s/black_o_zone_frame_250x200_p2s.gcode"
+    ]
+  }
+}

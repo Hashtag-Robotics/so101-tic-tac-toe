@@ -1,0 +1,11 @@
+part,quantity,specification,notes
+Camera PCB screw,4,M2 x 8-10 mm,Existing camera fasteners may be reused
+Camera PCB nut,4,M2,Placed on the rear side of the PCB
+Mast joint bolt,2,M3 x 40 mm,Locks bottom-middle and middle-top puzzle joints
+Mast joint nut,2,M3 nyloc,One per mast joint
+Base socket bolt,1,M3 x 50 mm,Locks the lower rail into the tabletop base
+Base socket nut,1,M3 nyloc,For the base socket bolt
+Camera tilt bolt,1,M3 x 40 mm,Passes through the unchanged V2 camera cradle and V4 round pivot head
+Camera tilt nut,1,M3 nyloc,Tighten only enough to hold the selected camera angle
+Base mounting screw,4,M5,Length depends on workbench or mounting plate
+Cable tie,3,Small zip tie or hook-and-loop,Runs the USB cable down the open rear channel

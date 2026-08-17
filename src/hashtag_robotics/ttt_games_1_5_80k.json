@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "model_repo_id": "HashtagRobotics/smolvla-tic-tac-toe-games-1-5-80k",
+  "model_revision": "d65f5ec4f771b4e6d21c5be78ddc18af242895a6",
+  "dataset_repo_id": "HashtagRobotics/tic-tac-toe-so101-block-a-clean-v1",
+  "dataset_revision": "527021f455d6af0ae6e4a9be0e2bd665d21b05be",
+  "expected_episodes": 65,
+  "expected_training_steps": 80000,
+  "expected_batch_size": 16,
+  "action_shape": [
+    6
+  ],
+  "camera_mapping": {
+    "observation.images.top": "observation.images.camera1",
+    "observation.images.wrist": "observation.images.camera2"
+  },
+  "empty_cameras": 1,
+  "chunk_size": 50,
+  "n_action_steps": 50,
+  "checkpoint_path_template": ".",
+  "model_slug_template": "games_1_5_step_{checkpoint}",
+  "default_checkpoint": "080000",
+  "checkpoints": [
+    "080000"
+  ]
+}

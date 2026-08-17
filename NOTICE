@@ -1,0 +1,11 @@
+Hashtag Robotics SO-101 Tic-Tac-Toe
+Copyright 2026 Hashtag World Company
+
+The software in this repository is licensed under Apache-2.0. Hardware design
+files under hardware/ are licensed separately under CERN-OHL-P-2.0; see
+hardware/LICENSE.
+
+This project interoperates with Hugging Face LeRobot and Strands Agents. Their
+names and marks remain the property of their respective owners. SO-101 and
+Bambu Lab product names are used only to describe compatibility and do not
+imply endorsement.

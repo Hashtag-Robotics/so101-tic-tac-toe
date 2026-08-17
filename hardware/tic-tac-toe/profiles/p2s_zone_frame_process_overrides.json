@@ -1,0 +1,11 @@
+{
+    "name": "0.20mm Black Zone Frame @BBL P2S",
+    "from": "User",
+    "curr_bed_type": "Textured PEI Plate",
+    "wall_loops": "2",
+    "skirt_loops": "0",
+    "brim_type": "no_brim",
+    "compatible_printers": [
+        "Bambu Lab P2S 0.4 nozzle"
+    ]
+}

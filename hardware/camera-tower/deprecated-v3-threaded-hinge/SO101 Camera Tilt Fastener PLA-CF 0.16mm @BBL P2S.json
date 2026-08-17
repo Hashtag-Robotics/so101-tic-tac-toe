@@ -1,0 +1,26 @@
+{
+  "type": "process",
+  "name": "SO101 Camera Tilt Fastener PLA-CF 0.16mm @BBL P2S",
+  "inherits": "0.16mm High Quality @BBL P2S",
+  "from": "user",
+  "instantiation": "true",
+  "description": "Support-free coarse printed hinge fastener: 0.16 mm, 5 walls, 50% gyroid, hardened 0.4 mm nozzle and PLA-CF.",
+  "compatible_printers": [
+    "Bambu Lab P2S 0.4 nozzle"
+  ],
+  "layer_height": "0.16",
+  "wall_loops": "5",
+  "top_shell_layers": "6",
+  "bottom_shell_layers": "6",
+  "sparse_infill_density": "50%",
+  "sparse_infill_pattern": "gyroid",
+  "seam_position": "aligned",
+  "outer_wall_speed": "45",
+  "inner_wall_speed": "80",
+  "elefant_foot_compensation": "0.15",
+  "brim_type": "no_brim",
+  "brim_width": "0",
+  "enable_support": "0",
+  "support_type": "normal(auto)",
+  "curr_bed_type": "Textured PEI Plate"
+}

@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+export TTT_RUN_LABEL="X-3"
+export TTT_SINGLE_TASK="put the red X in the top right cell"
+exec zsh "${0:A:h}/../scripts/run_ttt_recorded_rollout.zsh"

@@ -1,0 +1,14 @@
+{
+  "type": "process",
+  "brim_type": "no_brim",
+  "compatible_printers": ["Bambu Lab P2S 0.4 nozzle"],
+  "from": "User",
+  "inherits": "fdm_process_single_0.20",
+  "instantiation": "true",
+  "name": "SO101 Large Hashtag PLA-CF 0.20mm @BBL P2S",
+  "setting_id": "SO101 Large Hashtag PLA-CF 0.20mm @BBL P2S",
+  "sparse_infill_density": "20%",
+  "sparse_infill_pattern": "gyroid",
+  "top_surface_pattern": "monotonicline",
+  "wall_loops": "4"
+}

@@ -1,0 +1,110 @@
+{
+  "put the red X in the bottom center cell": {
+    "episode_index": 4,
+    "board_robot": ".OX/.../...",
+    "board_camera": ".../.../XO.",
+    "start_pose": [-1.978, -65.319, 42.681, 75.868, -0.659, 1.215]
+  },
+  "put the red X in the bottom left cell": {
+    "episode_index": 45,
+    "board_robot": ".../OXO/...",
+    "board_camera": ".../OXO/...",
+    "start_pose": [-2.505, -54.418, 13.846, 100.220, 5.319, 1.283]
+  },
+  "put the red X in the bottom right cell": {
+    "episode_index": 16,
+    "board_robot": ".../.../O..",
+    "board_camera": "..O/.../...",
+    "start_pose": [-3.912, -70.593, 40.396, 92.308, 1.802, 1.215]
+  },
+  "put the red X in the middle center cell": {
+    "episode_index": 42,
+    "board_robot": ".../..O/...",
+    "board_camera": ".../O../...",
+    "start_pose": [-2.505, -48.352, 9.802, 100.132, 4.176, 1.215]
+  },
+  "put the red X in the middle left cell": {
+    "episode_index": 58,
+    "board_robot": "X.O/..X/O..",
+    "board_camera": "..O/X../O.X",
+    "start_pose": [-6.198, -66.813, 21.231, 99.780, -0.044, 1.215]
+  },
+  "put the red X in the middle right cell": {
+    "episode_index": 52,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-1.802, -56.000, 31.253, 82.374, 2.681, 1.283]
+  },
+  "put the red X in the top center cell": {
+    "episode_index": 26,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-1.890, -102.681, 49.978, 82.549, 5.934, 1.148]
+  },
+  "put the red X in the top left cell": {
+    "episode_index": 56,
+    "board_robot": "..O/..X/...",
+    "board_camera": ".../X../O..",
+    "start_pose": [-1.626, -54.593, 12.967, 99.956, 4.000, 1.215]
+  },
+  "put the red X in the top right cell": {
+    "episode_index": 0,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [2.769, -102.681, 96.923, 61.890, 1.714, 1.350]
+  },
+  "put the white O in the bottom center cell": {
+    "episode_index": 63,
+    "board_robot": "X.O/XXX/O.O",
+    "board_camera": "O.O/XXX/O.X",
+    "start_pose": [-4.352, -63.033, 27.473, 93.451, 0.747, 1.283]
+  },
+  "put the white O in the bottom left cell": {
+    "episode_index": 15,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-4.440, -58.901, 33.451, 82.901, 0.220, 1.215]
+  },
+  "put the white O in the bottom right cell": {
+    "episode_index": 29,
+    "board_robot": ".X./.../...",
+    "board_camera": ".../.../.X.",
+    "start_pose": [-1.978, -65.231, 19.648, 100.044, 3.912, 1.215]
+  },
+  "put the white O in the middle center cell": {
+    "episode_index": 54,
+    "board_robot": ".../..X/...",
+    "board_camera": ".../X../...",
+    "start_pose": [-1.451, -60.132, 19.209, 99.341, 3.121, 1.283]
+  },
+  "put the white O in the middle left cell": {
+    "episode_index": 39,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-4.791, -86.857, 39.253, 100.220, 1.626, 1.215]
+  },
+  "put the white O in the middle right cell": {
+    "episode_index": 41,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-5.582, -44.923, 11.121, 98.462, 3.473, 1.350]
+  },
+  "put the white O in the top center cell": {
+    "episode_index": 40,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-3.648, -59.429, 19.824, 98.725, 5.934, 1.215]
+  },
+  "put the white O in the top left cell": {
+    "episode_index": 27,
+    "board_robot": ".X./.../...",
+    "board_camera": ".../.../.X.",
+    "start_pose": [-2.769, -53.626, 31.429, 82.901, 4.879, 1.215]
+  },
+  "put the white O in the top right cell": {
+    "episode_index": 14,
+    "board_robot": ".../.../...",
+    "board_camera": ".../.../...",
+    "start_pose": [-7.429, -61.187, 44.000, 81.846, -2.505, 1.215]
+  }
+}

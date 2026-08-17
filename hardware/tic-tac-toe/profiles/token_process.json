@@ -1,0 +1,20 @@
+{
+  "type": "process",
+  "bottom_shell_layers": "3",
+  "brim_type": "no_brim",
+  "compatible_printers": ["Bambu Lab P2S 0.4 nozzle"],
+  "from": "User",
+  "inherits": "fdm_process_single_0.24",
+  "instantiation": "true",
+  "layer_height": "0.24",
+  "name": "SO101 Lightweight Tokens Silk+ 0.24mm @BBL P2S",
+  "outer_wall_speed": ["50", "50"],
+  "setting_id": "SO101 Lightweight Tokens Silk+ 0.24mm @BBL P2S",
+  "skirt_loops": "0",
+  "sparse_infill_density": "8%",
+  "sparse_infill_pattern": "gyroid",
+  "top_surface_pattern": "concentric",
+  "top_surface_speed": ["50", "50"],
+  "top_shell_layers": "3",
+  "wall_loops": "2"
+}

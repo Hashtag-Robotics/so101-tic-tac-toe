@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+exec zsh "${0:A:h}/../scripts/run_ttt_checkpoint.zsh" 040000 "$@"
