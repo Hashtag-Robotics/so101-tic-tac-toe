@@ -9,6 +9,7 @@ import re
 import struct
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -39,6 +40,15 @@ REQUIRED_PATHS = (
     "hardware/camera-tower/BOM.csv",
     "training/README.md",
     "training/03_train_games_1_15_colab_a100.ipynb",
+    "docs/media/README.md",
+    "docs/media/hero.svg",
+    "docs/media/story-pipeline.svg",
+    "docs/media/dataset-metrics.svg",
+    "docs/media/checkpoint-lineage.svg",
+    "docs/media/architecture.svg",
+    "docs/media/printing-triptych.gif",
+    "docs/media/dataset-batch-16.gif",
+    "docs/media/strands-robots-simulation.png",
     "scripts/load_ttt_checkpoint.py",
 )
 
@@ -104,6 +114,52 @@ def verify_repository_boundary() -> None:
         raise ReleaseError("README does not link to the standalone dashboard repository")
     if not (ROOT / "src" / "hashtag_robotics_ttt" / "__init__.py").is_file():
         raise ReleaseError("Standalone hashtag_robotics_ttt package is missing")
+
+
+def verify_story_media() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    expected_svg_viewboxes = {
+        "docs/media/hero.svg": "0 0 1440 560",
+        "docs/media/story-pipeline.svg": "0 0 1440 330",
+        "docs/media/dataset-metrics.svg": "0 0 1440 290",
+        "docs/media/checkpoint-lineage.svg": "0 0 1440 240",
+        "docs/media/architecture.svg": "0 0 1440 670",
+    }
+    for relative, expected_viewbox in expected_svg_viewboxes.items():
+        path = ROOT / relative
+        try:
+            root = ET.parse(path).getroot()
+        except ET.ParseError as error:
+            raise ReleaseError(f"Invalid story SVG: {relative}") from error
+        if root.tag != "{http://www.w3.org/2000/svg}svg":
+            raise ReleaseError(f"Unexpected root element in story SVG: {relative}")
+        if root.attrib.get("viewBox") != expected_viewbox:
+            raise ReleaseError(f"Story SVG viewBox changed: {relative}")
+        if relative not in readme:
+            raise ReleaseError(f"README does not use story SVG: {relative}")
+
+    expected_gifs = {
+        "docs/media/printing-triptych.gif": (972, 184),
+        "docs/media/dataset-batch-16.gif": (880, 664),
+    }
+    for relative, expected_dimensions in expected_gifs.items():
+        payload = (ROOT / relative).read_bytes()
+        if payload[:6] not in {b"GIF87a", b"GIF89a"} or len(payload) < 10:
+            raise ReleaseError(f"Invalid story GIF: {relative}")
+        dimensions = struct.unpack_from("<HH", payload, 6)
+        if dimensions != expected_dimensions:
+            raise ReleaseError(f"Story GIF dimensions changed: {relative}")
+        if relative not in readme:
+            raise ReleaseError(f"README does not use story GIF: {relative}")
+
+    simulation = ROOT / "docs/media/strands-robots-simulation.png"
+    payload = simulation.read_bytes()
+    if payload[:8] != b"\x89PNG\r\n\x1a\n" or len(payload) < 24:
+        raise ReleaseError("Invalid software-only simulation PNG")
+    if struct.unpack_from(">II", payload, 16) != (1200, 900):
+        raise ReleaseError("Software-only simulation PNG dimensions changed")
+    if str(simulation.relative_to(ROOT)) not in readme:
+        raise ReleaseError("README does not use the software-only simulation PNG")
 
 
 def verify_artifact_contract() -> None:
@@ -285,6 +341,7 @@ def main() -> int:
     checks = (
         ("required files", require_release_files),
         ("standalone repository boundary", verify_repository_boundary),
+        ("story media and README references", verify_story_media),
         ("pinned dataset/model contract", verify_artifact_contract),
         ("manufacturing checksums", verify_checksums),
         ("STL dimensions and 3MF integrity", verify_manufacturing_manifest),

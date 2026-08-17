@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 560" role="img" aria-labelledby="title desc">
+  <title id="title">Hashtag Robotics SO-101 Tic-Tac-Toe</title>
+  <desc id="desc">A dark technical illustration of an SO-101 robot arm playing tic-tac-toe, with the words A robot arm that learned to play.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080a0f"/>
+      <stop offset="0.52" stop-color="#111522"/>
+      <stop offset="1" stop-color="#08090d"/>
+    </linearGradient>
+    <radialGradient id="redGlow" cx="72%" cy="54%" r="52%">
+      <stop offset="0" stop-color="#ff304f" stop-opacity="0.24"/>
+      <stop offset="0.55" stop-color="#ff304f" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#ff304f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="headline" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#bfc5d4"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f9fafb"/>
+      <stop offset="0.45" stop-color="#aeb7c6"/>
+      <stop offset="1" stop-color="#596273"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" fill="none" stroke="#ffffff" stroke-opacity="0.035"/>
+    </pattern>
+    <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="18" stdDeviation="15" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="560" rx="32" fill="url(#bg)"/>
+  <rect width="1440" height="560" rx="32" fill="url(#grid)"/>
+  <rect width="1440" height="560" rx="32" fill="url(#redGlow)"/>
+  <path d="M0 482C272 420 430 520 682 472S1120 387 1440 453V560H0Z" fill="#050609" fill-opacity="0.72"/>
+
+  <g transform="translate(76 66)">
+    <g aria-label="Hashtag Robotics">
+      <rect width="278" height="34" rx="17" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.14"/>
+      <path d="M20 11v12M31 11v12M15 15h21M15 20h21" stroke="#ff304f" stroke-width="2.4" stroke-linecap="round"/>
+      <text x="48" y="23" fill="#f7f8fb" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="2.1">HASHTAG ROBOTICS</text>
+    </g>
+    <text x="0" y="87" fill="#ff4662" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="3.3">OPEN PHYSICAL AI / PROJECT 01</text>
+    <text x="0" y="153" fill="url(#headline)" font-family="Inter,Arial,sans-serif" font-size="61" font-weight="800" letter-spacing="-2.4">
+      <tspan x="0" dy="0">A ROBOT ARM</tspan>
+      <tspan x="0" dy="68">THAT LEARNED</tspan>
+      <tspan x="0" dy="68">TO PLAY.</tspan>
+    </text>
+    <text x="2" y="387" fill="#929bad" font-family="Inter,Arial,sans-serif" font-size="18" letter-spacing="0.4">SO-101  ×  TIC-TAC-TOE  ×  SMOLVLA</text>
+    <g transform="translate(0 421)">
+      <circle cx="6" cy="6" r="6" fill="#2dd4bf"/>
+      <text x="22" y="12" fill="#c9cfda" font-family="Inter,Arial,sans-serif" font-size="15">CAD → print → data → train → agent → play</text>
+    </g>
+  </g>
+
+  <g transform="translate(735 74)" filter="url(#softShadow)">
+    <!-- board -->
+    <g transform="translate(154 224) skewX(-9) rotate(-4 190 115)">
+      <rect x="0" y="0" width="408" height="242" rx="24" fill="#0d1119" stroke="#ffffff" stroke-opacity="0.12"/>
+      <path d="M136 25V217M272 25V217M26 81H382M26 161H382" stroke="#434b5c" stroke-width="12" stroke-linecap="round"/>
+      <g fill="none" stroke="#e9edf4" stroke-width="13">
+        <circle cx="68" cy="41" r="24"/>
+        <circle cx="205" cy="121" r="24"/>
+        <circle cx="340" cy="201" r="24"/>
+      </g>
+      <g stroke="#ff304f" stroke-width="15" stroke-linecap="round" filter="url(#glow)">
+        <path d="M181 25l48 38M229 25l-48 38"/>
+        <path d="M44 103l48 38M92 103l-48 38"/>
+        <path d="M316 103l48 38M364 103l-48 38"/>
+      </g>
+    </g>
+
+    <!-- stylized SO-101 -->
+    <g transform="translate(0 0)">
+      <ellipse cx="168" cy="431" rx="112" ry="29" fill="#000000" fill-opacity="0.44"/>
+      <path d="M86 402h156l27 42H60Z" fill="#303746" stroke="#6f7889"/>
+      <rect x="94" y="335" width="104" height="77" rx="15" fill="url(#metal)" stroke="#ffffff" stroke-opacity="0.4"/>
+      <circle cx="146" cy="344" r="38" fill="#242a35" stroke="#cbd1da" stroke-width="9"/>
+      <path d="M146 331L212 201" stroke="url(#metal)" stroke-width="47" stroke-linecap="round"/>
+      <path d="M146 331L212 201" stroke="#ffffff" stroke-opacity="0.45" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="212" cy="201" r="39" fill="#252b36" stroke="#d4d9e1" stroke-width="10"/>
+      <path d="M212 201L339 146" stroke="url(#metal)" stroke-width="43" stroke-linecap="round"/>
+      <path d="M216 195L335 144" stroke="#ffffff" stroke-opacity="0.42" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="341" cy="145" r="34" fill="#252b36" stroke="#d4d9e1" stroke-width="9"/>
+      <path d="M341 145l89 49" stroke="url(#metal)" stroke-width="38" stroke-linecap="round"/>
+      <g transform="translate(425 189) rotate(26)">
+        <rect x="-18" y="-23" width="72" height="47" rx="13" fill="url(#metal)" stroke="#ffffff" stroke-opacity="0.5"/>
+        <path d="M48-15l52-18M48 15l52 18" stroke="#d6dbe3" stroke-width="14" stroke-linecap="round"/>
+        <path d="M95-34l23-8M95 34l23 8" stroke="#697385" stroke-width="10" stroke-linecap="round"/>
+      </g>
+      <circle cx="146" cy="344" r="10" fill="#ff304f" filter="url(#glow)"/>
+      <circle cx="212" cy="201" r="8" fill="#ff304f"/>
+      <circle cx="341" cy="145" r="7" fill="#ff304f"/>
+    </g>
+  </g>
+
+  <g transform="translate(1180 55)">
+    <text x="0" y="0" fill="#697386" font-family="Inter,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">END-TO-END</text>
+    <text x="0" y="23" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="13">Hardware + data</text>
+    <text x="0" y="43" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="13">Policy + agent</text>
+  </g>
+</svg>

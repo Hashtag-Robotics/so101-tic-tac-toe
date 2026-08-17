@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 670" role="img" aria-labelledby="title desc">
+  <title id="title">Tic-tac-toe agent architecture</title>
+  <desc id="desc">A vision-capable Strands Agent reads top and wrist cameras, chooses a legal cell, and calls one narrow move tool. A deterministic controller enforces rules and safety before a pinned SmolVLA policy moves an SO-101 through the guarded robotics runtime. Hugging Face hosts the dataset and policy; the standalone dashboard observes and manages local workflows.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#090c12"/><stop offset="1" stop-color="#151a26"/></linearGradient>
+    <linearGradient id="agent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#29141d"/><stop offset="1" stop-color="#17131a"/></linearGradient>
+    <linearGradient id="safe" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#12221f"/><stop offset="1" stop-color="#0f1719"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#667084"/></marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#ff4962"/></marker>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.38"/></filter>
+  </defs>
+  <rect width="1440" height="670" rx="30" fill="url(#bg)"/>
+  <text x="60" y="57" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="25" font-weight="760">Reason broadly. Act narrowly.</text>
+  <text x="60" y="84" fill="#828b9b" font-family="Inter,Arial,sans-serif" font-size="13" letter-spacing="1.45">THE LLM PLAYS THE GAME; DETERMINISTIC BOUNDARIES OWN PHYSICAL EXECUTION</text>
+
+  <!-- main flow -->
+  <g font-family="Inter,Arial,sans-serif" filter="url(#shadow)">
+    <g transform="translate(60 137)">
+      <rect width="228" height="130" rx="18" fill="#131824" stroke="#3a4354"/>
+      <circle cx="39" cy="42" r="18" fill="#293142"/><path d="M30 42h18M39 33v18" stroke="#f2f4f8" stroke-width="2"/>
+      <text x="67" y="39" fill="#ffffff" font-size="16" font-weight="750">Human + cameras</text>
+      <text x="22" y="76" fill="#8c96a8" font-size="13">Natural-language goal</text>
+      <text x="22" y="97" fill="#8c96a8" font-size="13">Top view = board truth</text>
+      <text x="22" y="118" fill="#8c96a8" font-size="13">Wrist view = diagnostics</text>
+    </g>
+    <g transform="translate(340 137)">
+      <rect width="230" height="130" rx="18" fill="url(#agent)" stroke="#873044"/>
+      <circle cx="39" cy="42" r="18" fill="#ff304f"/><path d="M31 42h16M39 34v16" stroke="#fff" stroke-width="2.5"/>
+      <text x="67" y="39" fill="#ffffff" font-size="16" font-weight="750">Strands Agent</text>
+      <text x="22" y="76" fill="#b58f98" font-size="13">Vision + game strategy</text>
+      <text x="22" y="97" fill="#b58f98" font-size="13">Chooses one legal cell</text>
+      <text x="22" y="118" fill="#b58f98" font-size="13">Never writes joint targets</text>
+    </g>
+    <g transform="translate(622 137)">
+      <rect width="250" height="130" rx="18" fill="#171925" stroke="#6a4257"/>
+      <rect x="22" y="24" width="34" height="34" rx="8" fill="#33202d"/><path d="M30 35h18M30 42h18M30 49h11" stroke="#ff7187" stroke-width="2"/>
+      <text x="68" y="39" fill="#ffffff" font-size="16" font-weight="750">One move contract</text>
+      <text x="22" y="76" fill="#9c92a1" font-size="13">play_tic_tac_toe_move(cell)</text>
+      <text x="22" y="97" fill="#9c92a1" font-size="13">Symbol + task derived in code</text>
+      <text x="22" y="118" fill="#9c92a1" font-size="13">No shell, servo, or raw tools</text>
+    </g>
+    <g transform="translate(924 137)">
+      <rect width="258" height="130" rx="18" fill="url(#safe)" stroke="#267b6c"/>
+      <path d="M39 22l19 8v17c0 15-10 24-19 29-9-5-19-14-19-29V30z" fill="#1a4d45" stroke="#2dd4bf" stroke-width="2"/>
+      <path d="M31 46l6 6 11-14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <text x="71" y="39" fill="#ffffff" font-size="16" font-weight="750">Deterministic controller</text>
+      <text x="22" y="83" fill="#85aaa3" font-size="13">Rules · coordinate transform</text>
+      <text x="22" y="104" fill="#85aaa3" font-size="13">Approvals · leases · retry caps</text>
+      <text x="22" y="125" fill="#85aaa3" font-size="13">Camera/schema/E-STOP gates</text>
+    </g>
+    <g transform="translate(1234 137)">
+      <rect width="146" height="130" rx="18" fill="#161b24" stroke="#4e596b"/>
+      <text x="22" y="37" fill="#ffffff" font-size="16" font-weight="750">SmolVLA</text>
+      <text x="22" y="62" fill="#ff6579" font-size="13" font-weight="700">120K pinned</text>
+      <text x="22" y="86" fill="#8e98a9" font-size="12">images + state</text>
+      <text x="22" y="106" fill="#8e98a9" font-size="12">→ action chunk</text>
+    </g>
+  </g>
+
+  <path d="M288 202H332" stroke="#667084" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M570 202H614" stroke="#ff4962" stroke-width="3" marker-end="url(#arrowRed)"/>
+  <path d="M872 202H916" stroke="#667084" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M1182 202H1226" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- execution rail -->
+  <g font-family="Inter,Arial,sans-serif" filter="url(#shadow)">
+    <g transform="translate(736 332)">
+      <rect width="292" height="115" rx="18" fill="#121722" stroke="#465266"/>
+      <text x="24" y="37" fill="#ffffff" font-size="17" font-weight="750">Strands Robots + LeRobot</text>
+      <text x="24" y="64" fill="#8b96a8" font-size="13">Unified robot / policy boundary</text>
+      <text x="24" y="85" fill="#8b96a8" font-size="13">Sim-first; real mode is explicit</text>
+      <text x="24" y="106" fill="#8b96a8" font-size="13">6D action at 30 FPS</text>
+    </g>
+    <g transform="translate(1092 332)">
+      <rect width="288" height="115" rx="18" fill="#181a21" stroke="#74525a"/>
+      <text x="24" y="37" fill="#ffffff" font-size="17" font-weight="750">Hashtag Robotics SO-101</text>
+      <text x="24" y="64" fill="#a39498" font-size="13">Follower + top/wrist cameras</text>
+      <text x="24" y="85" fill="#a39498" font-size="13">Printed board + pickup zones</text>
+      <text x="24" y="106" fill="#ff7187" font-size="13" font-weight="700">Operator remains in control</text>
+    </g>
+  </g>
+  <path d="M1307 267V313H882V324" fill="none" stroke="#667084" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M1028 389H1084" stroke="#667084" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- artifact and observer rail -->
+  <g font-family="Inter,Arial,sans-serif">
+    <g transform="translate(60 508)">
+      <rect width="344" height="102" rx="17" fill="#111721" stroke="#3f536b"/>
+      <text x="22" y="34" fill="#ffffff" font-size="16" font-weight="750">Hugging Face dataset</text>
+      <text x="22" y="59" fill="#8a99aa" font-size="13">195 episodes · top + wrist · 6D</text>
+      <text x="22" y="82" fill="#ffb42e" font-size="12" font-weight="700">PUBLIC, REVISION-PINNED SOURCE OF TRUTH</text>
+    </g>
+    <g transform="translate(452 508)">
+      <rect width="344" height="102" rx="17" fill="#111721" stroke="#3f536b"/>
+      <text x="22" y="34" fill="#ffffff" font-size="16" font-weight="750">Hugging Face policy</text>
+      <text x="22" y="59" fill="#8a99aa" font-size="13">SmolVLA · checkpoint 120000</text>
+      <text x="22" y="82" fill="#ff6579" font-size="12" font-weight="700">STRICT LOAD + CAMERA CONTRACT</text>
+    </g>
+    <g transform="translate(844 508)">
+      <rect width="536" height="102" rx="17" fill="#111721" stroke="#3f536b"/>
+      <text x="22" y="34" fill="#ffffff" font-size="16" font-weight="750">Optional standalone dashboard</text>
+      <text x="22" y="59" fill="#8a99aa" font-size="13">Discovery · profiles · jobs · approvals · audit history</text>
+      <text x="22" y="82" fill="#2dd4bf" font-size="12" font-weight="700">SEPARATE REPOSITORY; THE GAME RUNS WITHOUT IT</text>
+    </g>
+  </g>
+  <path d="M404 559H444" stroke="#667084" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M624 508V472H1307V455" fill="none" stroke="#5f6879" stroke-width="2" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+  <path d="M1112 508V467" stroke="#5f6879" stroke-width="2" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+</svg>
