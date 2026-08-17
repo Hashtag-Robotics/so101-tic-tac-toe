@@ -3,99 +3,73 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "hashtag-robotics"
-# Read from hashtag_robotics.__version__ so the wheel filename and the version
-# the running app reports can never disagree.
+name = "hashtag-robotics-tic-tac-toe"
 dynamic = ["version"]
-description = "Local-first SO-101 control plane and agent-safe robotics dashboard"
+description = "End-to-end SO-101 tic-tac-toe hardware, policy, and Strands agent runtime"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 authors = [{ name = "Hashtag Robotics" }]
 dependencies = [
-  "fastapi>=0.116,<1",
-  # `safety.py` reads the Hub token from here before it will let a dataset be
-  # published. It used to arrive on lerobot's coat-tails, so it worked on any
-  # machine with the so101 extra and nowhere else -- a base install refused
-  # every upload with no way to tell why.
-  # Floor is 1.0 because lerobot 0.6 requires it; anything lower makes the
-  # so101 extra unresolvable rather than merely old.
   "huggingface-hub>=1.0,<2",
   "packaging>=24.2",
-  # Managed robot jobs must be identifiable after a control-plane restart on
-  # macOS as well as Linux; Darwin has no /proc process metadata.
-  "psutil>=7,<8",
-  "pydantic>=2.11,<3",
-  "pydantic-settings>=2.10,<3",
-  "pyserial>=3.5,<4",
-  "typer>=0.16,<1",
-  "uvicorn[standard]>=0.35,<1",
 ]
 
 [project.optional-dependencies]
 agents = [
   "strands-agents>=1.48,<2",
-  # strands ships every provider's adapter and none of their clients. This one
-  # is here because a self-hosted model is the realistic planner for a board
-  # with no cloud credentials, and leaving it out meant configuring a model that
-  # is already running on the same machine and getting ModuleNotFoundError.
   "ollama>=0.6,<1",
 ]
 dev = [
-  "httpx>=0.28,<1",
   "pytest>=8.4,<9",
-  "pytest-asyncio>=1.1,<2",
   "ruff>=0.12,<1",
 ]
-sim = [
-  "mujoco>=3.3,<4",
-  # MuJoCo renders raw pixels; turning them into the JPEG the live view streams
-  # is cv2's job (`simulation.py`). Headless because nothing here opens a
-  # window -- only `imencode` and `VideoCapture` are used -- and the full build
-  # drags in libGL, which a board without a display does not have. This is also
-  # the variant lerobot pins, so installing both extras cannot land two cv2s.
-  "opencv-python-headless>=4.10,<5",
-]
 so101 = [
-  "lerobot[core_scripts,feetech,smolvla]>=0.6,<0.7",
+  "lerobot[core_scripts,feetech,smolvla]>=0.6.1,<0.7",
+]
+strands-robots = [
+  "strands-robots[lerobot,sim-mujoco]==0.5.1",
+  "lerobot[core_scripts,feetech,smolvla]>=0.6.1,<0.7",
 ]
 training = [
-  "lerobot[training]>=0.6,<0.7",
+  "lerobot[training]>=0.6.1,<0.7",
 ]
 
+[project.urls]
+Repository = "https://github.com/Hashtag-Robotics/so101-tic-tac-toe"
+Dashboard = "https://github.com/Hashtag-Robotics/so101-dashboard"
+Dataset = "https://huggingface.co/datasets/HashtagRobotics/tic-tac-toe-so101-block-a-clean-v1"
+
 [project.scripts]
-hashtag-robotics = "hashtag_robotics.cli:app"
-hashtag-lerobot-record = "hashtag_robotics.lerobot_wrappers:record_main"
-hashtag-lerobot-rollout = "hashtag_robotics.lerobot_wrappers:rollout_main"
+hashtag-ttt-lerobot-record = "hashtag_robotics_ttt.lerobot_wrappers:record_main"
+hashtag-ttt-lerobot-rollout = "hashtag_robotics_ttt.lerobot_wrappers:rollout_main"
 
 [tool.hatch.version]
-path = "src/hashtag_robotics/__init__.py"
+path = "src/hashtag_robotics_ttt/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/hashtag_robotics"]
+packages = ["src/hashtag_robotics_ttt"]
 
 [tool.hatch.build]
 include = [
-  "src/hashtag_robotics/**/*.py",
-  "src/hashtag_robotics/**/*.json",
-  "src/hashtag_robotics/**/*.swift",
-  "src/hashtag_robotics/web/**/*",
-]
-artifacts = [
-  "src/hashtag_robotics/web/**/*",
+  "src/hashtag_robotics_ttt/**/*.py",
+  "src/hashtag_robotics_ttt/**/*.json",
+  "src/hashtag_robotics_ttt/**/*.swift",
 ]
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "src/hashtag_robotics",
+  "src/hashtag_robotics_ttt",
+  "LICENSE",
+  "NOTICE",
   "README.md",
+  "STRANDS_AGENT.md",
   "pyproject.toml",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-asyncio_mode = "auto"
 
 [tool.ruff]
 target-version = "py312"

@@ -11,96 +11,54 @@ concurrency:
 
 jobs:
   software:
-    name: Lint, tests, dashboard and wheel
+    name: Game contract, tests and package
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      # MuJoCo opens a real GL context to render and a runner has no display,
-      # so the default GLFW backend does not raise -- it aborts the process
-      # (SIGABRT, exit 134) from inside renderer.__init__, which reads as a
-      # crashed suite rather than a missing one. osmesa renders in software
-      # and needs no display at all.
-      MUJOCO_GL: osmesa
-      PYOPENGL_PLATFORM: osmesa
     steps:
       - uses: actions/checkout@v4
-
-      - name: Software OpenGL for MuJoCo
-        run: sudo apt-get update && sudo apt-get install -y libosmesa6-dev
 
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
+      - name: Install the software-only runtime
+        run: uv sync --extra dev --extra agents
 
-      # MuJoCo is a small wheel and the contract model is part of the safety
-      # story, so it runs on every push. LeRobot and Torch do not.
-      - name: Install the control plane
-        run: uv sync --extra dev --extra sim --extra agents
+      - name: Verify the release
+        run: bash scripts/verify.sh
 
-      - name: Install the dashboard
-        run: npm --prefix frontend ci
-
-      - name: Ruff
-        run: |
-          uv run ruff check src tests
-          uv run ruff format --check src tests
-
-      - name: Tests
-        run: uv run pytest -q
-
-      - name: Dashboard typecheck
-        run: npm --prefix frontend run typecheck
-
-      - name: Build wheel with the dashboard inside
-        run: bash scripts/build-package.sh
+      - name: Build the distributable package
+        run: uv build
 
       - name: Install the wheel into a clean environment
         run: |
           uv venv .clean
           uv pip install --python .clean/bin/python dist/*.whl
-          .clean/bin/hashtag-robotics version
-          .clean/bin/hashtag-robotics capabilities > /dev/null
+          .clean/bin/python -c "import hashtag_robotics_ttt; print(hashtag_robotics_ttt.__version__)"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheel
+          name: tic-tac-toe-wheel
           path: dist/*.whl
 
-  lerobot-contract:
-    name: Full suite against LeRobot 0.6
+  strands-robots-contract:
+    name: Strands Robots and LeRobot 0.6.1 contract
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      MUJOCO_GL: osmesa
-      PYOPENGL_PLATFORM: osmesa
     steps:
       - uses: actions/checkout@v4
-
-      - name: Software OpenGL for MuJoCo
-        run: sudo apt-get update && sudo apt-get install -y libosmesa6-dev
 
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
-      # Torch is a large download, so this job carries the LeRobot surface on
-      # its own; the fast job above stays green in minutes. `sim` comes along
-      # because the recording tests drive SimArm, which is MuJoCo, and `agents`
-      # because this job runs the whole suite.
-      - name: Install with the SO-101 extra
-        run: uv sync --extra dev --extra so101 --extra sim --extra agents
+      - name: Install the native optional runtime
+        run: uv sync --extra dev --extra agents --extra strands-robots
 
-      # The whole suite, not a file list. Everything is installed here, so this
-      # is the only job where the `requires_lerobot` tests actually run -- and a
-      # hand-kept list of files is exactly how a test ends up skipped in the
-      # fast job, absent from the slow one, and green in neither.
-      - name: The full suite, with LeRobot present
+      - name: Run the complete game test suite
         run: uv run pytest -q
+
+      - name: Inspect without constructing a robot
+        run: uv run python scripts/inspect_ttt_strands_robots.py

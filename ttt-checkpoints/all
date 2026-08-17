@@ -5,25 +5,25 @@ set -euo pipefail
 sweep_dir="${0:A:h}"
 
 if (( $# != 1 )); then
-  print -u2 -- "Kullanım: $0 <X-1..X-9|O-1..O-9>"
+  print -u2 -- "Usage: $0 <X-1..X-9|O-1..O-9>"
   exit 2
 fi
 
 task_launcher="${1:u}"
 if [[ "$task_launcher" != [XO]-[1-9] ]]; then
-  print -u2 -- "Geçersiz görev launcher'ı: $task_launcher (örnek: O-5 veya X-2)"
+  print -u2 -- "Invalid task launcher: $task_launcher (example: O-5 or X-2)"
   exit 2
 fi
 
 checkpoint_launchers=(20k 40k 60k 80k 100k 120k)
-print -- "Checkpoint sweep: ${checkpoint_launchers[*]} | görev=$task_launcher"
-print -- "Her checkpoint ayrı fiziksel rollout'tur; HOME ve E-STOP kapıları yeniden uygulanır."
-print -- "Her run sonrası aynı tahta/piece başlangıç düzenini yeniden kur."
+print -- "Checkpoint sweep: ${checkpoint_launchers[*]} | task=$task_launcher"
+print -- "Each checkpoint is a separate physical rollout; HOME and E-STOP gates apply again."
+print -- "Restore the same initial board and piece layout after each run."
 
 for ((index = 1; index <= ${#checkpoint_launchers[@]}; index++)); do
   checkpoint_launcher="${checkpoint_launchers[$index]}"
   print -- ""
-  print -- "[$index/${#checkpoint_launchers[@]}] $checkpoint_launcher başlıyor."
+  print -- "[$index/${#checkpoint_launchers[@]}] Starting $checkpoint_launcher."
   if zsh "$sweep_dir/$checkpoint_launcher" "$task_launcher"; then
     :
   else
@@ -34,13 +34,13 @@ for ((index = 1; index <= ${#checkpoint_launchers[@]}; index++)); do
 
   if (( index < ${#checkpoint_launchers[@]} )); then
     print -- ""
-    printf "Sonucu ve çalışma alanını kontrol et. Sonraki checkpoint için NEXT yaz (çıkmak için ENTER): "
+    printf "Check the result and workspace. Type NEXT for the next checkpoint (ENTER exits): "
     IFS= read -r sweep_confirmation
     if [[ "$sweep_confirmation" != "NEXT" ]]; then
-      print -- "Sweep operatör tarafından durduruldu."
+      print -- "Sweep stopped by the operator."
       exit 0
     fi
   fi
 done
 
-print -- "Checkpoint sweep tamamlandı: ${checkpoint_launchers[*]}"
+print -- "Checkpoint sweep complete: ${checkpoint_launchers[*]}"

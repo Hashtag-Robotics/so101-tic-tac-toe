@@ -9,27 +9,27 @@ rollout_policy_root="$rollout_repo_dir/.local-data/policies"
 rollout_model_variant="${TTT_MODEL_VARIANT:-games-1-15}"
 case "$rollout_model_variant" in
   games-1-15)
-    rollout_checkpoint_manifest="$rollout_repo_dir/src/hashtag_robotics/ttt_checkpoint_sweep.json"
+    rollout_checkpoint_manifest="$rollout_repo_dir/src/hashtag_robotics_ttt/ttt_checkpoint_sweep.json"
     ;;
   games-1-5-80k)
-    rollout_checkpoint_manifest="$rollout_repo_dir/src/hashtag_robotics/ttt_games_1_5_80k.json"
+    rollout_checkpoint_manifest="$rollout_repo_dir/src/hashtag_robotics_ttt/ttt_games_1_5_80k.json"
     ;;
   *)
-    print -u2 -- "İzin verilmeyen model varyantı: $rollout_model_variant"
+    print -u2 -- "Unsupported model variant: $rollout_model_variant"
     exit 2
     ;;
 esac
 rollout_checkpoint_fetcher="$rollout_repo_dir/scripts/fetch_ttt_checkpoint.py"
-rollout_presets_file="$rollout_repo_dir/src/hashtag_robotics/ttt_training_presets.json"
+rollout_presets_file="$rollout_repo_dir/src/hashtag_robotics_ttt/ttt_training_presets.json"
 rollout_log_dir="$rollout_repo_dir/.local-data/rollout-logs"
 
 if ! command -v jq >/dev/null 2>&1; then
-  print -u2 -- "Bu script checkpoint ve kamera JSON'u icin jq gerektiriyor."
+  print -u2 -- "This script requires jq for checkpoint and camera JSON."
   exit 1
 fi
 if [[ ! -f "$rollout_hardware_config" ]]; then
-  print -u2 -- "Donanım profili bulunamadı: $rollout_hardware_config"
-  print -u2 -- "Önce config/ttt-hardware.example.json dosyasını .local-data/ttt-hardware.json olarak kopyala ve kendi cihazlarını gir."
+  print -u2 -- "Hardware profile not found: $rollout_hardware_config"
+  print -u2 -- "Copy config/ttt-hardware.example.json to .local-data/ttt-hardware.json and enter your devices first."
   exit 1
 fi
 if ! jq -e '
@@ -40,7 +40,7 @@ if ! jq -e '
   (.inference_device | IN("mps", "cuda", "cpu")) and
   (.top_camera_uid != .wrist_camera_uid)
 ' "$rollout_hardware_config" >/dev/null; then
-  print -u2 -- "Donanım profili eksik veya geçersiz: $rollout_hardware_config"
+  print -u2 -- "Hardware profile is incomplete or invalid: $rollout_hardware_config"
   exit 1
 fi
 rollout_robot_port="${HASHTAG_TTT_ROBOT_PORT:-$(jq -er '.robot_port' "$rollout_hardware_config")}"
@@ -57,11 +57,11 @@ if [[ "$rollout_helper" != /* ]]; then
   rollout_helper="$rollout_repo_dir/$rollout_helper"
 fi
 if [[ ! -f "$rollout_checkpoint_manifest" ]]; then
-  print -u2 -- "Checkpoint sweep manifesti bulunamadi: $rollout_checkpoint_manifest"
+  print -u2 -- "Checkpoint sweep manifest not found: $rollout_checkpoint_manifest"
   exit 1
 fi
 if [[ ! -f "$rollout_checkpoint_fetcher" ]]; then
-  print -u2 -- "Checkpoint indirme helper'i bulunamadi: $rollout_checkpoint_fetcher"
+  print -u2 -- "Checkpoint download helper not found: $rollout_checkpoint_fetcher"
   exit 1
 fi
 rollout_model_repo="$(jq -er '.model_repo_id' "$rollout_checkpoint_manifest")"
@@ -72,8 +72,8 @@ rollout_default_checkpoint="$(jq -er '.default_checkpoint' "$rollout_checkpoint_
 rollout_model_checkpoint="${TTT_MODEL_CHECKPOINT:-$rollout_default_checkpoint}"
 if ! jq -e --arg checkpoint "$rollout_model_checkpoint" \
   '.checkpoints | index($checkpoint) != null' "$rollout_checkpoint_manifest" >/dev/null; then
-  print -u2 -- "Checkpoint sweep listesinde yok: $rollout_model_checkpoint"
-  print -u2 -- "İzinli checkpointler: $(jq -r '.checkpoints | join(", ")' "$rollout_checkpoint_manifest")"
+  print -u2 -- "Checkpoint is not in the allowed sweep: $rollout_model_checkpoint"
+  print -u2 -- "Allowed checkpoints: $(jq -r '.checkpoints | join(", ")' "$rollout_checkpoint_manifest")"
   exit 1
 fi
 rollout_model_repo_slug="${rollout_model_repo//\//--}"
@@ -87,33 +87,33 @@ else
 fi
 
 if [[ ! -x "$rollout_helper" ]]; then
-  print -u2 -- "Kamera helper bulunamadi veya calistirilabilir degil: $rollout_helper"
+  print -u2 -- "Camera helper is missing or not executable: $rollout_helper"
   exit 1
 fi
 if [[ ! -e "$rollout_robot_port" ]]; then
-  print -u2 -- "Follower seri portu bulunamadi: $rollout_robot_port"
+  print -u2 -- "Follower serial port not found: $rollout_robot_port"
   exit 1
 fi
 if [[ ! -f "$rollout_calibration_dir/$rollout_robot_id.json" ]]; then
-  print -u2 -- "Follower kalibrasyonu bulunamadı: $rollout_calibration_dir/$rollout_robot_id.json"
+  print -u2 -- "Follower calibration not found: $rollout_calibration_dir/$rollout_robot_id.json"
   exit 1
 fi
 if [[ ! -f "$rollout_presets_file" ]]; then
-  print -u2 -- "Tic-tac-toe eğitim presetleri bulunamadı: $rollout_presets_file"
+  print -u2 -- "Tic-tac-toe training presets not found: $rollout_presets_file"
   exit 1
 fi
 
 assert_rollout_resources_free() {
   if pgrep -f '[h]ashtag-lerobot-rollout' >/dev/null 2>&1; then
-    print -u2 -- "Baska bir rollout process'i zaten calisiyor."
+    print -u2 -- "Another rollout process is already running."
     return 1
   fi
   if pgrep -f '[a]vfoundation-uid-capture' >/dev/null 2>&1; then
-    print -u2 -- "Kamera helper zaten kullanimda. Dashboard kamera onizlemesini kapat."
+    print -u2 -- "The camera helper is already in use. Close any active camera preview."
     return 1
   fi
   if lsof "$rollout_robot_port" >/dev/null 2>&1; then
-    print -u2 -- "Follower seri portu baska bir process tarafindan tutuluyor."
+    print -u2 -- "Another process owns the follower serial port."
     return 1
   fi
 }
@@ -127,7 +127,7 @@ assert_rollout_resources_free
   --policy-root "$rollout_policy_root" \
   --checkpoint "$rollout_model_checkpoint"
 if [[ ! -d "$rollout_model_dir" ]]; then
-  print -u2 -- "Doğrulanan model checkpoint dizini bulunamadi: $rollout_model_dir"
+  print -u2 -- "Validated model checkpoint directory not found: $rollout_model_dir"
   exit 1
 fi
 assert_rollout_resources_free
@@ -137,7 +137,7 @@ mkdir -p "$rollout_log_dir"
 if [[ -n "${TTT_SINGLE_TASK:-}" ]]; then
   rollout_label="${TTT_RUN_LABEL:-single}"
   if [[ -z "$rollout_label" || "$rollout_label" == *[^A-Za-z0-9_-]* ]]; then
-    print -u2 -- "TTT_RUN_LABEL yalnizca harf, rakam, alt cizgi ve tire icerebilir."
+    print -u2 -- "TTT_RUN_LABEL may contain only letters, numbers, underscores, and hyphens."
     exit 1
   fi
   rollout_tasks=("$TTT_SINGLE_TASK")
@@ -187,7 +187,7 @@ rollout_board_camera=""
 rollout_demo_episode=""
 if (( ${#rollout_tasks[@]} == 1 )); then
   rollout_preset_json="$(jq -ce --arg task "$rollout_task" '.[$task]' "$rollout_presets_file")" || {
-    print -u2 -- "Görev için eğitim preseti bulunamadı: $rollout_task"
+    print -u2 -- "No training preset found for task: $rollout_task"
     exit 1
   }
   rollout_board_robot="$(jq -r '.board_robot' <<<"$rollout_preset_json")"
@@ -230,39 +230,39 @@ rollout_rename_map="$(
   }'
 )"
 
-print -- "Kayıt klasörü: $rollout_root"
-print -- "Terminal logu: $rollout_log"
+print -- "Recording directory: $rollout_root"
+print -- "Terminal log: $rollout_log"
 print -- "Model: $rollout_model_repo@$rollout_model_revision checkpoint $rollout_model_checkpoint ($rollout_model_variant)"
 if (( ${#rollout_tasks[@]} == 1 )); then
-  print -- "Görev: $rollout_task"
-  print -- "Eğitim referansı: episode $rollout_demo_episode"
-  print -- "Top kamera görünümünde başlangıç tahtası: $rollout_board_camera"
+  print -- "Task: $rollout_task"
+  print -- "Training reference: episode $rollout_demo_episode"
+  print -- "Initial board in top-camera orientation: $rollout_board_camera"
   for rollout_board_row in ${(s:/:)rollout_board_camera}; do
     print -- "  $rollout_board_row"
   done
-  print -- "Model/robot yönündeki aynı tahta: $rollout_board_robot"
-  print -- "Ön kontrol: homing sırasında tahta üstü ve robotun süpürme alanı boş olmalı"
-  print -- "Q veya sağ ok: denemeyi kaydet, home'a dön, torku kapat ve çık"
+  print -- "Same board in model/robot orientation: $rollout_board_robot"
+  print -- "Preflight: keep the board and robot sweep volume clear during homing"
+  print -- "Q or Right Arrow: save the attempt, return home, disable torque, and exit"
 else
-  print -- "Oyun planı:"
+  print -- "Game plan:"
   for ((rollout_index = 1; rollout_index <= ${#rollout_tasks[@]}; rollout_index++)); do
     print -- "  $rollout_index. ${rollout_tasks[$rollout_index]}"
   done
-  print -- "Sağ ok: başarılı hamleyi kaydet ve sıradaki prompt'a geç"
-  print -- "Q: mevcut hamleyi kaydet, oyunu bitir, home'a dön ve torku kapat"
+  print -- "Right Arrow: save a successful move and advance to the next prompt"
+  print -- "Q: save the current move, end the game, return home, and disable torque"
 fi
-print -- "Süre sınırı yok | FPS: 30 | inference: $rollout_inference_label | hareket limiti: 5.0"
-printf "Robot önce eğitim başlangıç pozuna gidecek. Alan boş ve güç kesme erişilebilir ise HOME yaz: "
+print -- "No time limit | FPS: 30 | inference: $rollout_inference_label | motion limit: 5.0"
+printf "The robot will first move to the training start pose. If the area is clear and the power cut is reachable, type HOME: "
 IFS= read -r rollout_confirmation
 if [[ "$rollout_confirmation" != "HOME" ]]; then
-  print -- "Rollout iptal edildi; robot bağlantısı açılmadı."
+  print -- "Rollout cancelled; the robot connection was not opened."
   exit 1
 fi
 if (( ${#rollout_tasks[@]} == 1 )); then
-  print -- "Homing sonrası ekrandaki tahta düzenini kur; sağ ok ile modeli başlat."
-  print -- "Hamle tamamlanınca q veya sağ ok tuşuna bir kez bas."
+  print -- "After homing, arrange the displayed board and press Right Arrow to start the model."
+  print -- "When the move is complete, press q or Right Arrow once."
 else
-  print -- "Her başarılı hamlede sağ oka bir kez bas; oyun bitince q tuşuna bir kez bas."
+  print -- "Press Right Arrow once after each successful move; press q once when the game ends."
 fi
 
 cd "$rollout_repo_dir"
@@ -304,7 +304,7 @@ if HASHTAG_ROLLOUT_EPISODE_TASKS_JSON="$rollout_tasks_json" \
   HASHTAG_ASYNC_CHUNK_APPEND=1 \
   HASHTAG_TTT_DEMO_PRESET_JSON="$rollout_preset_json" \
   HF_LEROBOT_HOME="$rollout_lerobot_home" \
-  uv run hashtag-lerobot-rollout "${rollout_args[@]}" 2>&1 | tee "$rollout_log"; then
+  uv run hashtag-ttt-lerobot-rollout "${rollout_args[@]}" 2>&1 | tee "$rollout_log"; then
   rollout_status=0
 else
   rollout_status=$?
@@ -316,18 +316,18 @@ rollout_error_lines="$({
     "$rollout_log" || true
 } | tail -n 80)"
 if [[ -n "$rollout_error_lines" ]]; then
-  print -u2 -- "Rollout hata/incident özeti (son 80 eşleşme):"
+  print -u2 -- "Rollout error/incident summary (last 80 matches):"
   print -u2 -- "$rollout_error_lines"
-  print -u2 -- "Tam terminal logu: $rollout_log"
+  print -u2 -- "Full terminal log: $rollout_log"
 else
-  print -- "Rollout hata/incident özeti: ERROR, Traceback, RTC veya kamera incident kaydı yok."
+  print -- "Rollout error/incident summary: no ERROR, Traceback, RTC, or camera incident was recorded."
 fi
 
 if (( rollout_status == 0 )); then
-  print -- "Rollout tamamlandı. Dataset: $rollout_root"
-  print -- "Terminal logu kaydedildi: $rollout_log"
+  print -- "Rollout complete. Dataset: $rollout_root"
+  print -- "Terminal log saved: $rollout_log"
 else
-  print -u2 -- "Rollout başarısız oldu (exit=$rollout_status). Hedef dataset: $rollout_root"
-  print -u2 -- "Terminal logu kaydedildi: $rollout_log"
+  print -u2 -- "Rollout failed (exit=$rollout_status). Target dataset: $rollout_root"
+  print -u2 -- "Terminal log saved: $rollout_log"
   exit "$rollout_status"
 fi

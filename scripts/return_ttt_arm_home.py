@@ -15,12 +15,12 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from hashtag_robotics.config import Settings  # noqa: E402
-from hashtag_robotics.lerobot_wrappers import (  # noqa: E402
+from hashtag_robotics_ttt.lerobot_wrappers import (  # noqa: E402
     _TTT_JOINT_KEYS,
     _move_robot_to_ttt_demo_pose,
 )
-from hashtag_robotics.tic_tac_toe import preset_for_move, task_for_move  # noqa: E402
+from hashtag_robotics_ttt.settings import TicTacToeSettings  # noqa: E402
+from hashtag_robotics_ttt.tic_tac_toe import preset_for_move, task_for_move  # noqa: E402
 
 
 class HomeError(RuntimeError):
@@ -74,19 +74,25 @@ def assert_resources_ready(robot_port: str, robot_id: str, calibration_dir: Path
     calibration_file = calibration_dir / f"{robot_id}.json"
     if not calibration_file.is_file():
         raise HomeError(f"Follower calibration is missing: {calibration_file}")
-    if subprocess.run(
-        ["pgrep", "-f", "[h]ashtag-lerobot-rollout"],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    ).returncode == 0:
+    if (
+        subprocess.run(
+            ["pgrep", "-f", "[h]ashtag-lerobot-rollout"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    ):
         raise HomeError("A LeRobot rollout is still active; home recovery was refused.")
-    if subprocess.run(
-        ["lsof", robot_port],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    ).returncode == 0:
+    if (
+        subprocess.run(
+            ["lsof", robot_port],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    ):
         raise HomeError("The follower serial port is owned by another process.")
 
 
@@ -99,21 +105,18 @@ def request_approval(move_id: str, task: str) -> None:
         f"Reference task: {task}\n"
         "Remove hands, pieces and cables from the entire arm sweep volume.\n"
         "Keep the physical E-STOP reachable. The arm will move for about 7 seconds.\n"
-        f"Yalnızca bu dönüşü onaylamak için "
-        f"'{move_id} kapalı poz hareketini onaylıyorum' yaz: "
+        "Type the exact phrase below to approve only this recovery move:\n"
+        f"APPROVE HOME RECOVERY {move_id}: "
     )
     sys.stderr.flush()
-    if (
-        sys.stdin.readline().strip().casefold()
-        != f"{move_id} kapalı poz hareketini onaylıyorum".casefold()
-    ):
+    if sys.stdin.readline().strip().casefold() != f"APPROVE HOME RECOVERY {move_id}".casefold():
         raise HomeError("Operator did not authorize home recovery.")
 
 
 def main() -> int:
     args = parse_args()
     move_id = str(args.move).strip().upper()
-    settings = Settings(_env_file=None)
+    settings = TicTacToeSettings.from_environment()
     if not settings.enable_physical or not args.physical:
         raise HomeError("Set HASHTAG_ENABLE_PHYSICAL=true and pass --physical.")
     task = task_for_move(move_id)

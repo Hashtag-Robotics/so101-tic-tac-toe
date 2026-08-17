@@ -5,8 +5,6 @@ This support-free modular tower places a 32 × 32 mm USB camera at a nominal
 approximately 400 mm configuration. V4 keeps the original V2 camera cradle and
 adds a reinforced adjustable head to the logo mast.
 
-[Turkish instructions](README_TR.md)
-
 ## Print files
 
 If you already printed the V2 camera cradle, print only:

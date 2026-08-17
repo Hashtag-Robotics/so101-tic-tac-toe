@@ -13,14 +13,14 @@ dist/
 coverage/
 .coverage
 htmlcov/
-frontend/node_modules/
-frontend/*.tsbuildinfo
-frontend/vite.config.js
-frontend/vite.config.d.ts
-src/hashtag_robotics/web/*
-!src/hashtag_robotics/web/.gitkeep
+.clean/
 *.db
 *.db-shm
 *.db-wal
 diagnostics-*.json
 docs.zip
+
+# Generated leftovers from the dashboard split. These directories are not part
+# of the tic-tac-toe repository and must never be staged.
+frontend/
+src/hashtag_robotics/

@@ -1,9 +1,8 @@
 # Hashtag Robotics SO-101 Tic-Tac-Toe
 
 An open, end-to-end reference project for printing a large tic-tac-toe set,
-running two SO-101 arms through the Hashtag Robotics local dashboard, inspecting
-the public LeRobot dataset, downloading a revision-pinned SmolVLA policy, and
-executing guarded physical rollouts.
+inspecting the public LeRobot dataset, downloading a revision-pinned SmolVLA
+policy, and executing guarded SO-101 rollouts through a Strands game agent.
 
 > **Experimental robotics release.** The software defaults to simulation and
 > software-only mode. A printed board plus the pretrained policy is not a
@@ -11,19 +10,21 @@ executing guarded physical rollouts.
 > workspace geometry, joint limits, an accessible hardware E-STOP, and an
 > operator-approved low-speed preflight are mandatory.
 
-[Türkçe project overview](README_TR.md)
-
 ## What is included
 
 | Layer | Location | Contents |
 | --- | --- | --- |
 | Printable game | [`hardware/tic-tac-toe`](hardware/tic-tac-toe) | OpenSCAD, STL, Bambu P2S 3MF/G-code, profiles and print notes |
 | Camera tower | [`hardware/camera-tower`](hardware/camera-tower) | Parametric source, STEP/STL/3MF, BOM and assembly notes |
-| Local control plane | [`src/hashtag_robotics`](src/hashtag_robotics) | FastAPI backend, deterministic jobs, leases, approvals, audit and safety gates |
-| Dashboard | [`frontend`](frontend) | React/TypeScript UI, packaged into the Python wheel |
-| Tic-tac-toe runner | [`agent.py`](agent.py), [`ttt-rollouts`](ttt-rollouts) | 18 fixed X/O move launchers and a vision-guided Strands workflow |
+| Tic-tac-toe runtime | [`src/hashtag_robotics_ttt`](src/hashtag_robotics_ttt) | Game contract, Strands agent, Strands Robots adapter, camera backend, and LeRobot wrappers |
+| Tic-tac-toe runner | [`agent.py`](agent.py), [`ttt-rollouts`](ttt-rollouts) | One agent-facing move tool backed by 18 fixed X/O launchers |
 | Artifact contract | [`config/artifacts.lock.json`](config/artifacts.lock.json) | Dataset/model revisions, feature shapes and camera mapping |
 | Training recipe | [`training`](training) | Colab A100 notebook for the published 120K run |
+
+The reusable local dashboard now lives in its own repository:
+[Hashtag-Robotics/so101-dashboard](https://github.com/Hashtag-Robotics/so101-dashboard).
+It is optional for this game, and it can be installed without cloning the
+tic-tac-toe project.
 
 Large datasets and model weights are intentionally not stored in Git. They are
 public on Hugging Face and downloaded from pinned revisions:
@@ -56,46 +57,35 @@ collect or fine-tune data for that geometry.
 
 Requirements:
 
-- macOS or Linux for the software-only dashboard; the included direct two-camera
+- macOS or Linux for software-only inspection; the included direct two-camera
   physical tic-tac-toe runner currently uses macOS AVFoundation UID capture.
-- Python 3.12 or 3.13, [`uv`](https://docs.astral.sh/uv/), Node.js 24 and `jq`.
+- Python 3.12 or 3.13, [`uv`](https://docs.astral.sh/uv/), and `jq`.
 - For physical execution: LeRobot-compatible SO-101 follower hardware, two
   cameras, valid calibration and an inference device supported by your model.
 
 ```bash
 git clone https://github.com/Hashtag-Robotics/so101-tic-tac-toe.git
 cd so101-tic-tac-toe
-uv sync --extra dev --extra agents --extra sim --extra so101
-npm --prefix frontend ci
-npm --prefix frontend run build
+uv sync --extra dev --extra agents --extra so101
 uv run python scripts/verify_release.py
 ```
 
-## 3. Run the UI safely
+## 3. Optional dashboard
 
-Start in software-only mode:
-
-```bash
-HASHTAG_DATA_DIR=.local-data \
-HASHTAG_ENABLE_PHYSICAL=false \
-HASHTAG_OPEN_BROWSER=false \
-uv run hashtag-robotics serve
-```
-
-Open the exact URL printed by the server. The default is
-`http://127.0.0.1:8765`, but a local `.env` or occupied port may change it.
-Then run the read-only diagnostics:
+The dashboard is a separate product surface and package. Clone it beside this
+repository when you want visual discovery, profiles, dataset inspection,
+guarded jobs, approvals, E-STOP state, and audit history:
 
 ```bash
-HASHTAG_DATA_DIR=.local-data uv run hashtag-robotics doctor
-HASHTAG_DATA_DIR=.local-data uv run hashtag-robotics capabilities
-uv run hashtag-robotics hil-checklist
+git clone https://github.com/Hashtag-Robotics/so101-dashboard.git
+cd so101-dashboard
+uv sync --extra dev --extra agents --extra sim
+HASHTAG_ENABLE_PHYSICAL=false uv run hashtag-robotics serve
 ```
 
-The dashboard provides discovery, profiles, calibration import, camera preview,
-dataset inspection, policy import, guarded rollout jobs, approvals, E-STOP and
-audit history. It binds to loopback and physical adapters remain disabled unless
-explicitly enabled.
+Keep physical adapters disabled until calibration, limits, cameras, workspace,
+and the physical E-STOP have been verified. The two projects use different
+Python package namespaces and can coexist in one environment.
 
 ## 4. Configure your bench
 
@@ -108,10 +98,15 @@ cp config/ttt-hardware.example.json .local-data/ttt-hardware.json
 
 Edit the local copy with your follower serial path, robot ID, calibration
 directory, top/wrist camera UIDs and inference device. The macOS runner requires
-an executable AVFoundation UID helper; the dashboard's macOS discovery path can
-build it under `.local-data/bin/`. Linux serial paths should normally use stable
-`/dev/serial/by-id/...` links, but the exact physical tic-tac-toe camera adapter
-still needs a Linux implementation.
+an executable AVFoundation UID helper; build it without opening a camera:
+
+```bash
+uv run python scripts/build_macos_camera_helper.py
+```
+
+The helper is written under `.local-data/bin/`. Linux serial paths should
+normally use stable `/dev/serial/by-id/...` links, but the exact physical
+tic-tac-toe camera adapter still needs a Linux implementation.
 
 The feature contract is strict:
 
@@ -132,12 +127,12 @@ The public checkpoint needs no Hugging Face token:
 
 ```bash
 uv run python scripts/fetch_ttt_checkpoint.py \
-  --manifest src/hashtag_robotics/ttt_checkpoint_sweep.json \
+  --manifest src/hashtag_robotics_ttt/ttt_checkpoint_sweep.json \
   --policy-root .local-data/policies \
   --checkpoint 120000
 
 uv run python scripts/load_ttt_checkpoint.py \
-  --manifest src/hashtag_robotics/ttt_checkpoint_sweep.json \
+  --manifest src/hashtag_robotics_ttt/ttt_checkpoint_sweep.json \
   --policy-root .local-data/policies \
   --checkpoint 120000 \
   --device cpu
@@ -159,6 +154,31 @@ The published config declares `camera1`, `camera2`, legacy `camera3` and one
 exact schema is pinned and load-tested. Do not connect or remap a third camera;
 the runtime contract remains `top -> camera1`, `wrist -> camera2` with
 `empty_cameras=1`.
+
+### Optional native Strands Robots contract
+
+The repository also contains an experimental, software-first adapter for
+`strands-robots==0.5.1` and LeRobot `>=0.6.1,<0.7.0`. Install it only when you
+want to evaluate that path:
+
+```bash
+uv sync --extra dev --extra strands-robots
+uv run python scripts/inspect_ttt_strands_robots.py
+```
+
+The inspection command reads package metadata and prints the revision-pinned
+policy/camera contract. It does not instantiate `Robot`, load weights, enumerate
+serial devices or open cameras. Native simulation always constructs
+`Robot("so101", mode="sim", mesh=False)` explicitly. Native hardware construction
+requires both the persistent physical setting and a per-invocation opt-in;
+`mode="auto"` is not accepted by the project adapter.
+
+The upstream `lerobot_local` provider requires an explicit remote-code trust
+gate. This project never sets it on the user's behalf: review the pinned model
+repository before opting in. The current macOS production runner still uses its
+AVFoundation UID camera helper and guarded 18-launcher backend. The native
+Strands Robots hardware path currently accepts OpenCV camera devices, has not
+been HIL-tested for this bench, and is not selected by `agent.py`.
 
 ## 6. Physical rollout — supervised only
 
@@ -198,10 +218,11 @@ Bedrock and Anthropic are also supported by the existing Strands runtime; use
 their normal SDK credential/configuration chain and install the corresponding
 provider client. Do not put provider credentials in this repository.
 
-The LLM never receives shell, raw servo or unrestricted robot tools. It chooses
-among 18 fixed move tools; the deterministic controller owns legal moves,
+The LLM never receives shell, raw servo or unrestricted robot tools. It supplies
+one model-cell integer to a single move tool; the deterministic controller locks
+the symbol, derives one of the 18 exact training tasks, and owns legal moves,
 resource leases, camera mapping, retry limits, session approval and audit. See
-[`TTT_STRANDS_AGENT.md`](TTT_STRANDS_AGENT.md) for the complete contract.
+[`STRANDS_AGENT.md`](STRANDS_AGENT.md) for the complete contract.
 
 On macOS, importing the current LeRobot media stack can print duplicate
 AVFoundation class warnings because OpenCV and PyAV bundle FFmpeg components.
@@ -225,8 +246,9 @@ uv run python scripts/verify_release.py
 bash scripts/verify.sh
 ```
 
-CI runs lint, the complete test suite, frontend typecheck/build, wheel install,
-the public-release contract and a separate LeRobot 0.6 compatibility job.
+CI runs the English-only gate, lint, the complete game-focused test suite, the
+public-release contract, wheel installation, and a separate Strands Robots /
+LeRobot 0.6.1 compatibility job.
 
 ## Licenses
 

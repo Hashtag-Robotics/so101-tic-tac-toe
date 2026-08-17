@@ -8,8 +8,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 FETCHER_PATH = ROOT / "scripts" / "fetch_ttt_checkpoint.py"
-MANIFEST_PATH = ROOT / "src" / "hashtag_robotics" / "ttt_checkpoint_sweep.json"
-BASELINE_MANIFEST_PATH = ROOT / "src" / "hashtag_robotics" / "ttt_games_1_5_80k.json"
+MANIFEST_PATH = ROOT / "src" / "hashtag_robotics_ttt" / "ttt_checkpoint_sweep.json"
+BASELINE_MANIFEST_PATH = ROOT / "src" / "hashtag_robotics_ttt" / "ttt_games_1_5_80k.json"
 
 
 def load_fetcher():
@@ -124,5 +124,5 @@ def test_checkpoint_path_template_cannot_escape_the_revision_directory(
     manifest = json.loads(BASELINE_MANIFEST_PATH.read_text())
     manifest["checkpoint_path_template"] = "../outside"
 
-    with pytest.raises(fetcher.CheckpointError, match="dışına çıkamaz"):
+    with pytest.raises(fetcher.CheckpointError, match="cannot escape"):
         fetcher.checkpoint_directory(tmp_path, manifest, "080000")

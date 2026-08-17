@@ -7,9 +7,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LAUNCHERS = ROOT / "ttt-rollouts"
 CHECKPOINT_LAUNCHERS = ROOT / "ttt-checkpoints"
-CHECKPOINT_MANIFEST = ROOT / "src" / "hashtag_robotics" / "ttt_checkpoint_sweep.json"
-BASELINE_MANIFEST = ROOT / "src" / "hashtag_robotics" / "ttt_games_1_5_80k.json"
-PRESETS = ROOT / "src" / "hashtag_robotics" / "ttt_training_presets.json"
+CHECKPOINT_MANIFEST = ROOT / "src" / "hashtag_robotics_ttt" / "ttt_checkpoint_sweep.json"
+BASELINE_MANIFEST = ROOT / "src" / "hashtag_robotics_ttt" / "ttt_games_1_5_80k.json"
+PRESETS = ROOT / "src" / "hashtag_robotics_ttt" / "ttt_training_presets.json"
 CELLS = {
     1: "top left",
     2: "top center",
@@ -157,7 +157,7 @@ def test_checkpoint_launchers_cover_the_requested_sweep_and_keep_operator_gates(
     assert "checkpoint_launchers=(20k 40k 60k 80k 100k 120k)" in sweep
     assert "games-1-5-80k" not in sweep
     assert '!= "NEXT"' in sweep
-    assert "HOME ve E-STOP kapıları yeniden uygulanır" in sweep
+    assert "HOME and E-STOP gates apply again" in sweep
 
 
 def test_runner_streams_and_persists_runtime_errors() -> None:
@@ -167,7 +167,7 @@ def test_runner_streams_and_persists_runtime_errors() -> None:
     assert '2>&1 | tee "$rollout_log"' in runner
     assert "RTC inference error" in runner
     assert "Hashtag camera incident" in runner
-    assert "Rollout hata/incident özeti" in runner
+    assert "Rollout error/incident summary" in runner
 
 
 def test_runner_requires_the_target_cell_to_be_empty_before_move_confirmation() -> None:
@@ -176,7 +176,7 @@ def test_runner_requires_the_target_cell_to_be_empty_before_move_confirmation() 
     assert "rollout_target_cell=" in runner
     assert "ttt_training_presets.json" in runner
     assert "HASHTAG_TTT_DEMO_PRESET_JSON" in runner
-    assert "Robot önce eğitim başlangıç pozuna gidecek" in runner
+    assert "The robot will first move to the training start pose" in runner
     assert '!= "HOME"' in runner
 
 
