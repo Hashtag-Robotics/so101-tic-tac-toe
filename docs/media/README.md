@@ -1,8 +1,9 @@
 # README media provenance
 
 This directory contains release visuals derived from original Hashtag Robotics
-project material. The media documents the project; it is not an evaluation
-result and must not be read as a physical task-success claim.
+project material. The media documents the project. The recovered game below is
+evidence for that one physical session only; it is not a measured success rate
+or a production-readiness claim.
 
 ## Animated media
 
@@ -23,17 +24,27 @@ cells — top view followed by wrist view — sampled at the same source timesta
 The 15-frame, 5 FPS edit preserves that pairing throughout its three-second
 loop.
 
+### `physical-gameplay.gif`
+
+A 1200 × 680, 11.4-second top-camera replay of physical session
+`ttt-agent-20260816_222150-3a8fe2a4`, recorded on 2026-08-16. Its seven frames
+preserve each confirmed board transition: four robot X moves interleaved with
+three legal human O moves. The final frame is the original camera evidence for
+`OOX/.XO/X.X`, where X completes the 3-5-7 anti-diagonal. The accompanying
+labels translate the persisted audit states into English; the camera pixels are
+from the recorded run.
+
 ### `strands-game-terminal.gif`
 
-A 1200 × 680, 20.9-second terminal animation condensed from the public
-[`recorded game session`](https://gist.github.com/mertozbas/b79d6da443f4a0101f3e6c4b8e47408b).
-It replays the two physically confirmed robot moves, the human's next turn, the
-defensive X-1 rollout, camera occlusion and the operator-controlled stop through
-the current public interface: six lifecycle tools surrounding one bounded
-motion contract. The animation translates the interaction into English and
-omits provider compatibility warnings, machine-local paths, provider details
-and obsolete per-cell tool names. It explicitly marks the interrupted third
-attempt as having no claimed outcome, and it is not a new physical run.
+A 1200 × 680, 20.4-second terminal animation reconstructed from the trace,
+audit timeline and per-move transcripts of the same recovered physical session.
+The recorded run used the `games-1-5-80k` policy at checkpoint `080000` and
+ended in `game_over` with X as the winner. It shows all four first-attempt robot
+successes — `X-5`, `X-1`, `X-7` and `X-3` — through the current public
+interface: six lifecycle tools surrounding one bounded motion contract. The
+animation translates the interaction into English and omits machine-local
+paths, provider details and low-level rollout noise. It is a condensed replay,
+not a new physical run or a claim about aggregate policy reliability.
 
 ## Simulation media
 
