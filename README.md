@@ -230,17 +230,20 @@ unrestricted physical robot tool.
 ### Sim first, every time
 
 <p align="center">
-  <img src="docs/media/strands-robots-simulation.png" width="78%" alt="Software-only MuJoCo simulation with an SO-101 centered behind the CAD board, pickup zones, pieces and camera tower">
+  <img src="docs/media/strands-robots-simulation.png" width="78%" alt="Software-only MuJoCo simulation matching the dataset bench with an SO-101, robot-side pickup zones and a short front-center camera holder">
 </p>
 
 <p align="center"><sub>Software-only Strands Robots + MuJoCo scene. No robot, serial device, camera, or policy was opened.</sub></p>
 
 The simulation above was created explicitly with
 `Robot("so101", mode="sim", mesh=False)`. The board, both pickup-zone frames,
-the complete X/O inventory and the 600 mm camera tower are rendered from the
-committed metric STL geometry; the arm is the registered Strands Robots SO-101
-model. The CAD remains the manufacturing source of truth, while this scene is
-an illustrative bench layout rather than a dimensioned fixture drawing.
+the complete X/O inventory and the camera holder's short, single-section setup
+are rendered from the committed metric STL geometry; the arm is the registered
+Strands Robots SO-101 model. As on the recorded bench, the black X frame and red
+O frame sit on the robot side of the board, while the short camera holder is
+centered opposite the arm. The CAD remains the manufacturing source of truth,
+while this scene is an illustrative bench layout rather than a dimensioned
+fixture drawing.
 
 The runtime exposes Strands Robots as the common integration seam while keeping
 the deterministic 18-launcher backend for the repository's macOS AVFoundation
