@@ -35,11 +35,14 @@ Robot("so101", mode="sim", mesh=False)
 ```
 
 The scene combines the registered SO-101 model with metre-scaled copies of the
-committed board, X/O token, pickup-zone-frame and modular 600 mm camera-tower
-STLs. Four pieces of each symbol remain in their matching pickup area while two
-of each appear on the board. No serial device was enumerated, no camera was
-opened, no policy was loaded, and no hardware command was sent. The render is
-an illustrative bench composition; the authoritative manufacturing geometry
+committed board, X/O token, pickup-zone-frame and camera-holder STLs. It matches
+the recorded bench layout: the black X frame and red O frame sit toward the
+robot with their front edges aligned to the board's upper rail, and the short
+holder uses only the camera-bearing mast section directly opposite the arm.
+Four pieces of each symbol remain in their matching pickup area while two of
+each appear on the board. No serial device was enumerated, no camera was opened,
+no policy was loaded, and no hardware command was sent. The render is an
+illustrative bench composition; the authoritative manufacturing geometry
 remains under `hardware/`.
 
 ## SVG illustrations
