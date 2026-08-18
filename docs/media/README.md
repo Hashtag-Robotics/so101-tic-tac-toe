@@ -25,14 +25,15 @@ loop.
 
 ### `strands-game-terminal.gif`
 
-A 1200 × 680, 13.9-second terminal animation condensed from the public
+A 1200 × 680, 20.9-second terminal animation condensed from the public
 [`recorded game session`](https://gist.github.com/mertozbas/b79d6da443f4a0101f3e6c4b8e47408b).
-It replays the two physically confirmed robot moves through the current public
-interface: six lifecycle tools surrounding one bounded motion contract. The
-animation translates the interaction into English and omits provider
-compatibility warnings, machine-local paths, provider details and obsolete
-per-cell tool names. It does not portray the later operator-interrupted attempt
-as a completed move or game, and it is not a new physical run.
+It replays the two physically confirmed robot moves, the human's next turn, the
+defensive X-1 rollout, camera occlusion and the operator-controlled stop through
+the current public interface: six lifecycle tools surrounding one bounded
+motion contract. The animation translates the interaction into English and
+omits provider compatibility warnings, machine-local paths, provider details
+and obsolete per-cell tool names. It explicitly marks the interrupted third
+attempt as having no claimed outcome, and it is not a new physical run.
 
 ## Simulation media
 
