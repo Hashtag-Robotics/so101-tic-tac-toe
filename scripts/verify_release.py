@@ -48,6 +48,7 @@ REQUIRED_PATHS = (
     "docs/media/architecture.svg",
     "docs/media/printing-triptych.gif",
     "docs/media/dataset-batch-16.gif",
+    "docs/media/physical-gameplay.gif",
     "docs/media/strands-game-terminal.gif",
     "docs/media/strands-robots-simulation.png",
     "scripts/load_ttt_checkpoint.py",
@@ -142,6 +143,7 @@ def verify_story_media() -> None:
     expected_gifs = {
         "docs/media/printing-triptych.gif": (972, 184),
         "docs/media/dataset-batch-16.gif": (880, 664),
+        "docs/media/physical-gameplay.gif": (1200, 680),
         "docs/media/strands-game-terminal.gif": (1200, 680),
     }
     for relative, expected_dimensions in expected_gifs.items():

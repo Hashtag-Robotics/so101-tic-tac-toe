@@ -253,24 +253,34 @@ deterministic preflight boundaries.
 
 ## Chapter 5 — We played
 
-The game became a conversation, but motion stayed deterministic. In the
-[`captured terminal session`](https://gist.github.com/mertozbas/b79d6da443f4a0101f3e6c4b8e47408b),
-the agent verified both camera views, opened as X in the center, waited for one
-legal human O and two fresh clear-workspace observations, then placed its second
-X in the top-right. When the next defensive rollout obscured the authoritative
-board view, the terminal operator stopped it. The current public runtime
-expresses that full sequence through six lifecycle tools around one bounded
-motion contract.
+The game became a conversation, but motion stayed deterministic. We recovered
+the complete physical session recorded on 16 August 2026: the agent played X,
+the human played O, and the controller reached `game_over` with X as the winner.
+The robot completed all four moves — `X-5`, `X-1`, `X-7`, then `X-3` — on the
+first attempt, with no failed move or E-STOP.
+
+That recording evaluated the earlier
+[`games-1-5-80k` baseline](https://huggingface.co/HashtagRobotics/smolvla-tic-tac-toe-games-1-5-80k)
+at checkpoint `080000`; the repository now defaults to the full games 1–15
+policy at checkpoint `120000`. The current public runtime expresses the same
+verified game sequence through six lifecycle tools around one bounded motion
+contract.
+
+<p align="center">
+  <img src="docs/media/physical-gameplay.gif" width="100%" alt="Animated top-camera replay of the complete successful physical SO-101 tic-tac-toe game">
+</p>
+
+<p align="center"><sub>Original top-camera frames from the recovered physical session: four robot X moves, three legal human O moves, and the final 3-5-7 anti-diagonal win.</sub></p>
 
 <p align="center">
   <img src="docs/media/strands-game-terminal.gif" width="100%" alt="Animated terminal replay of a supervised Strands Agent tic-tac-toe session with an SO-101 and SmolVLA">
 </p>
 
-<p align="center"><sub>Condensed replay of two physically confirmed robot moves followed by the documented defensive rollout and operator-controlled stop. Provider compatibility warnings, machine-local paths and obsolete per-cell tool names are omitted; the interrupted third attempt is not presented as a successful move.</sub></p>
+<p align="center"><sub>Condensed English replay reconstructed from the same trace and audit trail, translated to the current six-tool public interface. Provider details and machine-local paths are omitted; every displayed outcome is backed by the recovered session.</sub></p>
 
-This terminal record is the first play artifact in the story. Physical gameplay
-videos can join this chapter next without changing the reproducible runtime or
-its audit boundary.
+Together, the camera and terminal replays form the first complete physical play
+artifact in the story. Longer gameplay videos can join this chapter next
+without changing the reproducible runtime or its audit boundary.
 
 ## The dashboard is its own product
 
