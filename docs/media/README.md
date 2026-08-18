@@ -23,6 +23,17 @@ cells — top view followed by wrist view — sampled at the same source timesta
 The 15-frame, 5 FPS edit preserves that pairing throughout its three-second
 loop.
 
+### `strands-game-terminal.gif`
+
+A 1200 × 680, 13.9-second terminal animation condensed from the public
+[`recorded game session`](https://gist.github.com/mertozbas/b79d6da443f4a0101f3e6c4b8e47408b).
+It replays the two physically confirmed robot moves through the current public
+interface: six lifecycle tools surrounding one bounded motion contract. The
+animation translates the interaction into English and omits provider
+compatibility warnings, machine-local paths, provider details and obsolete
+per-cell tool names. It does not portray the later operator-interrupted attempt
+as a completed move or game, and it is not a new physical run.
+
 ## Simulation media
 
 ### `strands-robots-simulation.png`

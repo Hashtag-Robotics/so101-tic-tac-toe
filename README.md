@@ -251,6 +251,25 @@ UID camera contract. Backend selection never changes safety ownership: camera
 identity, approval, the hardware lease, E-STOP state and the audit trail remain
 deterministic preflight boundaries.
 
+## Chapter 5 — We played
+
+The game became a conversation, but motion stayed deterministic. In the
+[`captured terminal session`](https://gist.github.com/mertozbas/b79d6da443f4a0101f3e6c4b8e47408b),
+the agent verified both camera views, opened as X in the center, waited for one
+legal human O and two fresh clear-workspace observations, then placed its second
+X in the top-right. The current public runtime expresses that sequence through
+six lifecycle tools around one bounded motion contract.
+
+<p align="center">
+  <img src="docs/media/strands-game-terminal.gif" width="100%" alt="Animated terminal replay of a supervised Strands Agent tic-tac-toe session with an SO-101 and SmolVLA">
+</p>
+
+<p align="center"><sub>Condensed replay of the two physically confirmed robot moves. Provider compatibility warnings, machine-local paths and obsolete per-cell tool names are omitted. The replay does not turn the later operator-interrupted attempt into a claimed result.</sub></p>
+
+This terminal record is the first play artifact in the story. Physical gameplay
+videos can join this chapter next without changing the reproducible runtime or
+its audit boundary.
+
 ## The dashboard is its own product
 
 The visual control plane is deliberately not bundled into this repository.
@@ -414,7 +433,7 @@ camera, audit, and E-STOP contract.
 | Guarded move backend | [`ttt-rollouts`](ttt-rollouts) | 18 fixed policy launchers hidden behind one move contract |
 | Artifact lock | [`config/artifacts.lock.json`](config/artifacts.lock.json) | Dataset/model revisions, shapes, cameras and licenses |
 | Training | [`training`](training) | Colab A100 120K reproduction notebook and contract |
-| Story media | [`docs/media`](docs/media) | Print GIF, eight paired-camera episodes, sim render, SVG diagrams and provenance |
+| Story media | [`docs/media`](docs/media) | Print GIF, paired-camera episodes, terminal replay, sim render, SVG diagrams and provenance |
 
 Large datasets and model weights are intentionally not stored in Git. They are
 downloaded from their public, revision-pinned Hugging Face repositories.
