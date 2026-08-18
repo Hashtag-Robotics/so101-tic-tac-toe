@@ -257,14 +257,16 @@ The game became a conversation, but motion stayed deterministic. In the
 [`captured terminal session`](https://gist.github.com/mertozbas/b79d6da443f4a0101f3e6c4b8e47408b),
 the agent verified both camera views, opened as X in the center, waited for one
 legal human O and two fresh clear-workspace observations, then placed its second
-X in the top-right. The current public runtime expresses that sequence through
-six lifecycle tools around one bounded motion contract.
+X in the top-right. When the next defensive rollout obscured the authoritative
+board view, the terminal operator stopped it. The current public runtime
+expresses that full sequence through six lifecycle tools around one bounded
+motion contract.
 
 <p align="center">
   <img src="docs/media/strands-game-terminal.gif" width="100%" alt="Animated terminal replay of a supervised Strands Agent tic-tac-toe session with an SO-101 and SmolVLA">
 </p>
 
-<p align="center"><sub>Condensed replay of the two physically confirmed robot moves. Provider compatibility warnings, machine-local paths and obsolete per-cell tool names are omitted. The replay does not turn the later operator-interrupted attempt into a claimed result.</sub></p>
+<p align="center"><sub>Condensed replay of two physically confirmed robot moves followed by the documented defensive rollout and operator-controlled stop. Provider compatibility warnings, machine-local paths and obsolete per-cell tool names are omitted; the interrupted third attempt is not presented as a successful move.</sub></p>
 
 This terminal record is the first play artifact in the story. Physical gameplay
 videos can join this chapter next without changing the reproducible runtime or
